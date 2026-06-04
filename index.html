@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>机甲探险任务站</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0e27;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle 2s infinite; }
+        @keyframes twinkle { 0%,100%{opacity:.3} 50%{opacity:1} }
+        .header { text-align: center; padding: 15px; position: relative; z-index: 1; }
+        .header h1 { font-size: 1.6rem; text-shadow: 0 0 15px #00d4ff; }
+        .date-display { font-size: .85rem; color: #a0d8ff; margin-top: 3px; }
+
+        .mecha-pal { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 10px; position: relative; z-index: 1; }
+        .mecha-avatar { width: 90px; height: 90px; flex-shrink: 0; }
+        .mecha-svg { width: 100%; height: 100%; animation: mechaFloat 3s ease-in-out infinite; }
+        @keyframes mechaFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .mecha-info { text-align: center; }
+        .mecha-name { font-size: 1.2rem; color: #ffd700; text-shadow: 0 0 8px #ffd700; }
+        .mecha-level { font-size: .85rem; color: #00d4ff; margin-top: 3px; }
+        .xp-bar-container { width: 150px; height: 16px; background: rgba(0,0,0,.5); border: 2px solid #00d4ff; border-radius: 8px; margin-top: 6px; overflow: hidden; }
+        .xp-bar { height: 100%; background: linear-gradient(90deg,#00d4ff,#0099cc); border-radius: 8px; transition: width .5s; width: 0; }
+        .xp-text { font-size: .7rem; margin-top: 3px; }
+
+        .sound-toggle { position: fixed; top: 10px; right: 10px; z-index: 100; background: rgba(0,0,0,.5); border: 1px solid #00d4ff; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; }
+
+        .streak-counter { text-align: center; padding: 5px; position: relative; z-index: 1; font-size: .85rem; }
+        .streak-flame { font-size: 1.2rem; }
+
+        .medal-wall { text-align: center; padding: 10px; position: relative; z-index: 1; }
+        .medal-wall h3 { color: #ffd700; font-size: 1rem; margin-bottom: 8px; }
+        .medals-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; max-width: 400px; margin: 0 auto; }
+        .medal { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; transition: all .3s; }
+        .medal.locked { background: rgba(100,100,100,.3); border: 2px solid #555; filter: grayscale(1); opacity: .5; }
+        .medal.unlocked { background: radial-gradient(circle,#ffd700,#ff8c00); border: 2px solid #fff; box-shadow: 0 0 15px #ffd700; }
+        .medal.today-medal { width: 55px; height: 55px; font-size: 1.8rem; }
+        .medal.today-medal.unlocked { animation: medalPulse 1.5s infinite; }
+        @keyframes medalPulse { 0%,100%{box-shadow:0 0 15px #ffd700} 50%{box-shadow:0 0 30px #ffd700,0 0 50px #ff8c00} }
+
+        .progress-overview { text-align: center; padding: 8px; position: relative; z-index: 1; }
+        .progress-bar { width: 85%; max-width: 400px; height: 24px; background: rgba(0,0,0,.5); border: 2px solid #00d4ff; border-radius: 12px; margin: 5px auto; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg,#00d4ff,#00ff88); border-radius: 12px; transition: width .5s; width: 0; }
+        .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: .85rem; text-shadow: 0 0 4px #000; }
+
+        .tasks-section { padding: 10px; max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+        .tasks-section h2 { text-align: center; color: #00d4ff; margin-bottom: 12px; font-size: 1.2rem; }
+        .tasks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        @media (min-width: 600px) { .tasks-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .task-card {
+            background: linear-gradient(145deg,rgba(0,100,200,.2),rgba(0,50,150,.3));
+            border: 2px solid #0066cc;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .25s;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+        .task-card:active { transform: scale(.95); }
+        .task-card.completed { background: linear-gradient(145deg,rgba(0,200,100,.2),rgba(0,150,50,.3)); border-color: #00cc66; }
+        .task-card:hover, .task-card.completed { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,212,255,.25); }
+        .task-icon { font-size: 2.2rem; margin-bottom: 6px; }
+        .task-name { font-size: .95rem; margin-bottom: 5px; }
+        .task-reward { font-size: .75rem; color: #ffd700; }
+        .task-check { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border: 2px solid rgba(255,255,255,.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .7rem; }
+        .task-card.completed .task-check { background: #00cc66; border-color: #00cc66; }
+
+        .footer { text-align: center; padding: 15px; position: relative; z-index: 1; }
+        .reset-btn { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.3); padding: 6px 16px; border-radius: 12px; color: #aaa; font-size: .8rem; cursor: pointer; }
+
+        .reward-overlay, .celebration-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,.75);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .reward-overlay.active, .celebration-overlay.active { display: flex; }
+        .reward-modal {
+            background: linear-gradient(145deg,#1a1f4b,#0d1137);
+            border: 3px solid #ffd700; border-radius: 20px;
+            padding: 30px 25px; text-align: center; max-width: 320px;
+            width: 100%; animation: rewardPop .4s ease;
+        }
+        @keyframes rewardPop { 0%{transform:scale(0)} 70%{transform:scale(1.08)} 100%{transform:scale(1)} }
+        .reward-icon { font-size: 3rem; margin-bottom: 10px; animation: rewardBounce 1s infinite; }
+        @keyframes rewardBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+        .reward-title { font-size: 1.3rem; color: #ffd700; margin-bottom: 6px; }
+        .reward-desc { font-size: .9rem; color: #a0d8ff; margin-bottom: 10px; }
+        .reward-xp { font-size: 1rem; color: #00d4ff; margin-bottom: 15px; }
+        .reward-close {
+            background: linear-gradient(145deg,#ffd700,#ff8c00); border: none;
+            padding: 10px 30px; border-radius: 20px; font-size: 1rem;
+            color: #000; font-weight: bold; cursor: pointer;
+        }
+
+        .celebration-modal { text-align: center; animation: celebrationIn .6s ease; }
+        @keyframes celebrationIn { 0%{transform:scale(0)rotate(-180deg)} 100%{transform:scale(1)rotate(0)} }
+        .celebration-medal { font-size: 5rem; animation: celebrationBounce 1s ease infinite; }
+        @keyframes celebrationBounce { 0%,100%{transform:translateY(0)scale(1)} 50%{transform:translateY(-20px)scale(1.15)} }
+        .celebration-title { font-size: 1.8rem; color: #ffd700; text-shadow: 0 0 20px #ffd700; margin-top: 10px; }
+        .celebration-subtitle { font-size: 1rem; margin-top: 6px; }
+
+        .confetti { position: fixed; width: 8px; height: 8px; top: -10px; z-index: 2001; animation: confettiFall linear forwards; }
+        @keyframes confettiFall { 0%{transform:translateY(0)rotate(0);opacity:1} 100%{transform:translateY(100vh)rotate(720deg);opacity:0} }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="开关音效">🔊</div>
+
+    <div class="header">
+        <h1>🚀 机甲探险任务站</h1>
+        <div class="date-display" id="dateDisplay"></div>
+    </div>
+
+    <div class="mecha-pal">
+        <div class="mecha-avatar">
+            <svg class="mecha-svg" viewBox="0 0 120 120">
+                <rect x="35" y="15" width="50" height="40" rx="5" fill="#4a90d9" stroke="#00d4ff" stroke-width="2"/>
+                <rect x="42" y="28" width="14" height="8" rx="2" fill="#00ff88"/>
+                <rect x="64" y="28" width="14" height="8" rx="2" fill="#00ff88"/>
+                <line x1="45" y1="15" x2="40" y2="5" stroke="#ffd700" stroke-width="2"/>
+                <circle cx="40" cy="5" r="3" fill="#ffd700"/>
+                <line x1="75" y1="15" x2="80" y2="5" stroke="#ffd700" stroke-width="2"/>
+                <circle cx="80" cy="5" r="3" fill="#ffd700"/>
+                <rect x="40" y="55" width="40" height="35" rx="5" fill="#2a5a9e" stroke="#00d4ff" stroke-width="2"/>
+                <circle cx="60" cy="72" r="10" fill="#ffd700" opacity=".8">
+                    <animate attributeName="opacity" values=".5;1;.5" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="20" y="58" width="18" height="25" rx="3" fill="#4a90d9" stroke="#00d4ff" stroke-width="1.5"/>
+                <rect x="82" y="58" width="18" height="25" rx="3" fill="#4a90d9" stroke="#00d4ff" stroke-width="1.5"/>
+                <rect x="42" y="90" width="14" height="22" rx="3" fill="#3a7ac5" stroke="#00d4ff" stroke-width="1.5"/>
+                <rect x="64" y="90" width="14" height="22" rx="3" fill="#3a7ac5" stroke="#00d4ff" stroke-width="1.5"/>
+                <polygon points="46,112 49,120 52,112" fill="#ff6b00" opacity=".7">
+                    <animate attributeName="opacity" values=".4;1;.4" dur=".4s" repeatCount="indefinite"/>
+                </polygon>
+                <polygon points="68,112 71,120 74,112" fill="#ff6b00" opacity=".7">
+                    <animate attributeName="opacity" values=".4;1;.4" dur=".4s" repeatCount="indefinite"/>
+                </polygon>
+            </svg>
+        </div>
+        <div class="mecha-info">
+            <div class="mecha-name">⚡ 雷霆机甲</div>
+            <div class="mecha-level" id="mechaLevel">等级 1</div>
+            <div class="xp-bar-container">
+                <div class="xp-bar" id="xpBar"></div>
+            </div>
+            <div class="xp-text" id="xpText">0 / 100 XP</div>
+        </div>
+    </div>
+
+    <div class="streak-counter">
+        <span class="streak-flame">🔥</span> 连续 <span id="streakNum">0</span> 天
+    </div>
+
+    <div class="medal-wall">
+        <h3>🏆 勋章墙</h3>
+        <div class="medals-container" id="medalsContainer">
+            <div class="medal today-medal locked" id="todayMedal" title="今日全勤">🌟</div>
+            <div class="medal locked" title="3天连续">⭐</div>
+            <div class="medal locked" title="7天连续">🌙</div>
+            <div class="medal locked" title="14天连续">💎</div>
+            <div class="medal locked" title="30天连续">👑</div>
+        </div>
+    </div>
+
+    <div class="progress-overview">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+            <div class="progress-text" id="progressText">0 / 5</div>
+        </div>
+    </div>
+
+    <div class="tasks-section">
+        <h2>📋 今日探险任务</h2>
+        <div class="tasks-grid" id="tasksGrid"></div>
+    </div>
+
+    <div class="footer">
+        <button class="reset-btn" onclick="resetDay()">🔄 重置今日</button>
+    </div>
+
+    <div class="reward-overlay" id="rewardOverlay" onclick="closeReward(event)">
+        <div class="reward-modal" onclick="event.stopPropagation()">
+            <div class="reward-icon" id="rewardIcon">🎉</div>
+            <div class="reward-title" id="rewardTitle">任务完成！</div>
+            <div class="reward-desc" id="rewardDesc"></div>
+            <div class="reward-xp" id="rewardXp">+20 XP</div>
+            <button class="reward-close" onclick="closeReward()">太棒了！</button>
+        </div>
+    </div>
+
+    <div class="celebration-overlay" id="celebrationOverlay" onclick="closeCelebration()">
+        <div class="celebration-modal" onclick="event.stopPropagation()">
+            <div class="celebration-medal">🌟</div>
+            <div class="celebration-title">🎊 全勤达成！</div>
+            <div class="celebration-subtitle">今日所有任务完成！<br>获得今日勋章 + 大量经验！</div>
+            <br>
+            <button class="reward-close" onclick="closeCelebration()">继续加油！</button>
+        </div>
+    </div>
+
+<script>
+// ============ 音效系统 ============
+let soundEnabled = true;
+let audioCtx = null;
+
+function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+    if (soundEnabled) {
+        getAudioCtx().resume();
+        playBeep(523, 0.1, 0.3);
+    }
+}
+
+function playBeep(freq, duration, vol) {
+    if (!soundEnabled) return;
+    try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(vol || 0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + duration);
+    } catch(e) {}
+}
+
+function playClick() { playBeep(600, 0.08, 0.1); }
+
+function playTaskComplete() {
+    if (!soundEnabled) return;
+    [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playBeep(f, 0.2, 0.2), i * 120));
+}
+
+function playLevelUp() {
+    if (!soundEnabled) return;
+    [523, 659, 784, 1047, 1319, 1047, 1319].forEach((f, i) => setTimeout(() => playBeep(f, 0.25, 0.2), i * 150));
+}
+
+function playCelebration() {
+    if (!soundEnabled) return;
+    [523, 659, 784].forEach(f => playBeep(f, 0.4, 0.15));
+    setTimeout(() => [659, 784, 1047].forEach(f => playBeep(f, 0.4, 0.15)), 200);
+    setTimeout(() => [784, 988, 1175].forEach(f => playBeep(f, 0.5, 0.15)), 400);
+    setTimeout(() => [1047, 1319, 1568].forEach(f => playBeep(f, 0.6, 0.2)), 600);
+    setTimeout(() => [523, 659, 784, 1047, 1319].forEach(f => playBeep(f, 0.8, 0.12)), 900);
+}
+
+function playCancel() { playBeep(300, 0.15, 0.1); }
+
+// ============ 数据 ============
+const tasks = [
+    { id: 'reading-cn', name: '中文阅读', icon: '📖', reward: '📚 知识碎片', xp: 20 },
+    { id: 'reading-en', name: '英文阅读', icon: '📕', reward: '🌍 语言宝石', xp: 20 },
+    { id: 'piano', name: '弹琴', icon: '🎹', reward: '🎵 旋律能量', xp: 25 },
+    { id: 'long-text', name: '长文挑战', icon: '📝', reward: '💪 勇气徽章', xp: 25 },
+    { id: 'shower', name: '洗澡', icon: '🚿', reward: '✨ 洁净之星', xp: 10 }
+];
+const rewardsPool = ['⚡ 能量核心','🔧 机甲零件','🛡️ 防护盾','🚀 推进器','🔋 超级电池','💠 晶体矿','🎯 瞄准镜','🔮 能量球'];
+
+let completedTasks = new Set();
+let totalXP = parseInt(localStorage.getItem('totalXP')) || 0;
+let currentLevel = parseInt(localStorage.getItem('currentLevel')) || 1;
+let streak = parseInt(localStorage.getItem('streak')) || 0;
+let medals = JSON.parse(localStorage.getItem('medals')) || {};
+let todayCompleted = localStorage.getItem('todayCompleted') === 'true';
+let lastDate = localStorage.getItem('lastDate') || '';
+
+// ============ 初始化 ============
+function init() {
+    createStars();
+    updateDate();
+    checkNewDay();
+    renderTasks();
+    updateUI();
+}
+
+function createStars() {
+    const container = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        const size = Math.random() * 2 + 1;
+        star.style.width = star.style.height = size + 'px';
+        container.appendChild(star);
+    }
+}
+
+function updateDate() {
+    const now = new Date();
+    document.getElementById('dateDisplay').textContent = now.toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+}
+
+function checkNewDay() {
+    const today = new Date().toDateString();
+    if (lastDate !== today) {
+        completedTasks.clear();
+        todayCompleted = false;
+        lastDate = today;
+        saveProgress();
+    }
+}
+
+// ============ 渲染 ============
+function renderTasks() {
+    const grid = document.getElementById('tasksGrid');
+    grid.innerHTML = '';
+    tasks.forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'task-card' + (completedTasks.has(task.id) ? ' completed' : '');
+        card.onclick = () => toggleTask(task);
+        card.innerHTML = `
+            <div class="task-check">${completedTasks.has(task.id) ? '✓' : ''}</div>
+            <div class="task-icon">${task.icon}</div>
+            <div class="task-name">${task.name}</div>
+            <div class="task-reward">${task.reward} +${task.xp}XP</div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// ============ 任务切换 ============
+function toggleTask(task) {
+    if (completedTasks.has(task.id)) {
+        completedTasks.delete(task.id);
+        todayCompleted = false;
+        playCancel();
+    } else {
+        completedTasks.add(task.id);
+        playTaskComplete();
+        showReward(task);
+        if (completedTasks.size === tasks.length) {
+            setTimeout(() => completeAllTasks(), 600);
+        }
+    }
+    saveProgress();
+    renderTasks();
+    updateUI();
+}
+
+function showReward(task) {
+    const bonus = rewardsPool[Math.floor(Math.random() * rewardsPool.length)];
+    document.getElementById('rewardIcon').textContent = task.icon;
+    document.getElementById('rewardTitle').textContent = task.name + ' 完成！';
+    document.getElementById('rewardDesc').textContent = '获得 ' + task.reward + ' 和 ' + bonus + '！';
+    document.getElementById('rewardXp').textContent = '+' + task.xp + ' XP';
+    document.getElementById('rewardOverlay').classList.add('active');
+    totalXP += task.xp;
+    checkLevelUp();
+}
+
+function closeReward(e) {
+    playClick();
+    document.getElementById('rewardOverlay').classList.remove('active');
+}
+
+function checkLevelUp() {
+    const need = currentLevel * 100;
+    if (totalXP >= need) {
+        totalXP -= need;
+        currentLevel++;
+        setTimeout(() => playLevelUp(), 300);
+    }
+    saveProgress();
+    updateUI();
+}
+
+function completeAllTasks() {
+    if (todayCompleted) return;
+    todayCompleted = true;
+    streak++;
+    medals[new Date().toDateString()] = true;
+    saveProgress();
+    playCelebration();
+    showCelebration();
+    updateUI();
+}
+
+function showCelebration() {
+    document.getElementById('celebrationOverlay').classList.add('active');
+    for (let i = 0; i < 40; i++) setTimeout(() => createConfetti(), i * 60);
+}
+
+function closeCelebration() {
+    playClick();
+    document.getElementById('celebrationOverlay').classList.remove('active');
+}
+
+function createConfetti() {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.backgroundColor = ['#ffd700','#ff6b6b','#00d4ff','#00ff88','#ff8c00'][Math.floor(Math.random()*5)];
+    c.style.borderRadius = Math.random() > .5 ? '50%' : '0';
+    c.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 4000);
+}
+
+// ============ UI 更新 ============
+function updateUI() {
+    document.getElementById('mechaLevel').textContent = '等级 ' + currentLevel;
+    const need = currentLevel * 100;
+    document.getElementById('xpBar').style.width = (totalXP / need * 100) + '%';
+    document.getElementById('xpText').textContent = totalXP + ' / ' + need + ' XP';
+    document.getElementById('streakNum').textContent = streak;
+    document.getElementById('progressFill').style.width = (completedTasks.size / tasks.length * 100) + '%';
+    document.getElementById('progressText').textContent = completedTasks.size + ' / ' + tasks.length;
+
+    const tm = document.getElementById('todayMedal');
+    tm.className = 'medal today-medal ' + (todayCompleted ? 'unlocked' : 'locked');
+
+    const streakMedals = [3, 7, 14, 30];
+    document.querySelectorAll('.medal:not(.today-medal)').forEach((m, i) => {
+        m.className = 'medal ' + (streak >= streakMedals[i] ? 'unlocked' : 'locked');
+    });
+}
+
+function saveProgress() {
+    localStorage.setItem('totalXP', totalXP);
+    localStorage.setItem('currentLevel', currentLevel);
+    localStorage.setItem('streak', streak);
+    localStorage.setItem('medals', JSON.stringify(medals));
+    localStorage.setItem('todayCompleted', todayCompleted);
+    localStorage.setItem('completedTasks', JSON.stringify([...completedTasks]));
+    localStorage.setItem('lastDate', lastDate);
+}
+
+function resetDay() {
+    playClick();
+    if (!confirm('确定重置今日任务？')) return;
+    completedTasks.clear();
+    todayCompleted = false;
+    streak = Math.max(0, streak - 1);
+    saveProgress();
+    renderTasks();
+    updateUI();
+}
+
+function loadSavedData() {
+    const saved = localStorage.getItem('completedTasks');
+    if (saved) completedTasks = new Set(JSON.parse(saved));
+}
+
+document.addEventListener('click', function unlockAudio() {
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    document.removeEventListener('click', unlockAudio);
+}, { once: true });
+
+loadSavedData();
+init();
+</script>
+</body>
+</html>
