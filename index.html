@@ -1,482 +1,1108 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sheldon · 机甲探险任务站</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: #0a0e27;
-            min-height: 100vh;
-            color: #fff;
-            overflow-x: hidden;
-            touch-action: manipulation;
-        }
-        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle 2s infinite; }
-        @keyframes twinkle { 0%,100%{opacity:.3} 50%{opacity:1} }
-        .header { text-align: center; padding: 15px; position: relative; z-index: 1; }
-        .header h1 { font-size: 1.6rem; text-shadow: 0 0 15px #00d4ff; }
-        .date-display { font-size: .85rem; color: #a0d8ff; margin-top: 3px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🌍 Earth HQ</title>
+<style>
+/* ===== VARIABLES ===== */
+:root {
+  --bg-deep: #070b14;
+  --bg-panel: rgba(12, 20, 45, 0.9);
+  --ck: #4ecdc4; --cw: #e17055; --ci: #a29bfe;
+  --cl: #ff9f43; --cc: #74b9ff; --cd: #55efc4;
+  --tb: #e8f0f0; --tn: #9aacb8; --td: #4a5a6a;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { font-family: var(--font); background: var(--bg-deep); color: var(--tb); height: 100vh; overflow: hidden; font-size: 15px; }
 
-        .mecha-pal { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 10px; position: relative; z-index: 1; }
-        .mecha-avatar { width: 90px; height: 90px; flex-shrink: 0; }
-        .mecha-svg { width: 100%; height: 100%; animation: mechaFloat 3s ease-in-out infinite; }
-        @keyframes mechaFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        .mecha-info { text-align: center; }
-        .mecha-name { font-size: 1.2rem; color: #ffd700; text-shadow: 0 0 8px #ffd700; }
-        .mecha-level { font-size: .85rem; color: #00d4ff; margin-top: 3px; }
-        .xp-bar-container { width: 150px; height: 16px; background: rgba(0,0,0,.5); border: 2px solid #00d4ff; border-radius: 8px; margin-top: 6px; overflow: hidden; }
-        .xp-bar { height: 100%; background: linear-gradient(90deg,#00d4ff,#0099cc); border-radius: 8px; transition: width .5s; width: 0; }
-        .xp-text { font-size: .7rem; margin-top: 3px; }
+/* ===== BACKGROUND ===== */
+#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.nebula { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 1; }
+.n1 { width: 500px; height: 500px; top: -150px; left: -150px; background: radial-gradient(circle, rgba(78,205,196,0.1), transparent 70%); animation: nf 25s ease-in-out infinite; }
+.n2 { width: 400px; height: 400px; bottom: 50px; right: -100px; background: radial-gradient(circle, rgba(162,155,254,0.08), transparent 70%); animation: nf 30s ease-in-out infinite reverse; }
+.n3 { width: 350px; height: 350px; top: 30%; left: 50%; background: radial-gradient(circle, rgba(116,185,255,0.06), transparent 70%); animation: nf 35s ease-in-out infinite; }
+.earth-far { position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%); width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2a9d8f, #0a3d3d 40%, transparent 70%); box-shadow: 0 0 50px rgba(42,157,143,0.15); opacity: 0.35; pointer-events: none; z-index: 1; }
+@keyframes nf { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-20px)} }
 
-        .sound-toggle { position: fixed; top: 10px; right: 10px; z-index: 100; background: rgba(0,0,0,.5); border: 1px solid #00d4ff; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; }
+/* ===== ANIMATIONS ===== */
+@keyframes fi { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes su { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes sf { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes cp { 0%{transform:scale(0.6);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+@keyframes glow { 0%,100%{opacity:0.6} 50%{opacity:1} }
+@keyframes splash { 0%{width:0} 100%{width:100%} }
 
-        .streak-counter { text-align: center; padding: 5px; position: relative; z-index: 1; font-size: .85rem; }
-        .streak-flame { font-size: 1.2rem; }
+/* ===== PAGE SYSTEM ===== */
+.page { position: fixed; inset: 0; z-index: 10; display: none; flex-direction: column; }
+.page.active { display: flex; }
+.scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px; }
 
-        .medal-wall { text-align: center; padding: 10px; position: relative; z-index: 1; }
-        .medal-wall h3 { color: #ffd700; font-size: 1rem; margin-bottom: 8px; }
-        .medals-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; max-width: 400px; margin: 0 auto; }
-        .medal { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; transition: all .3s; }
-        .medal.locked { background: rgba(100,100,100,.3); border: 2px solid #555; filter: grayscale(1); opacity: .5; }
-        .medal.unlocked { background: radial-gradient(circle,#ffd700,#ff8c00); border: 2px solid #fff; box-shadow: 0 0 15px #ffd700; }
-        .medal.today-medal { width: 55px; height: 55px; font-size: 1.8rem; }
-        .medal.today-medal.unlocked { animation: medalPulse 1.5s infinite; }
-        @keyframes medalPulse { 0%,100%{box-shadow:0 0 15px #ffd700} 50%{box-shadow:0 0 30px #ffd700,0 0 50px #ff8c00} }
+/* ===== SPLASH ===== */
+#splash { justify-content: center; align-items: center; background: radial-gradient(ellipse at center, #0f1a2e 0%, var(--bg-deep) 70%); z-index: 100; }
+.sb { text-align: center; animation: sf 4s ease-in-out infinite; }
+.sb .sl { font-size: 64px; margin-bottom: 12px; }
+.sb h1 { font-size: 28px; font-weight: 900; letter-spacing: 4px; background: linear-gradient(90deg, var(--ck), var(--cc)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.sb p { color: var(--tn); font-size: 13px; letter-spacing: 5px; margin-top: 6px; }
+.sbar { margin: 28px auto 0; width: 160px; height: 2px; background: rgba(255,255,255,0.06); border-radius: 1px; overflow: hidden; }
+.sbf { height: 100%; width: 0; background: linear-gradient(90deg, var(--ck), var(--cc)); animation: splash 2s ease-out forwards; }
 
-        .progress-overview { text-align: center; padding: 8px; position: relative; z-index: 1; }
-        .progress-bar { width: 85%; max-width: 400px; height: 24px; background: rgba(0,0,0,.5); border: 2px solid #00d4ff; border-radius: 12px; margin: 5px auto; overflow: hidden; position: relative; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg,#00d4ff,#00ff88); border-radius: 12px; transition: width .5s; width: 0; }
-        .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: .85rem; text-shadow: 0 0 4px #000; }
+/* ===== ONBOARDING ===== */
+#onboard { justify-content: center; align-items: center; padding: 24px; }
+.ob-box { max-width: 420px; width: 100%; text-align: center; animation: su 0.5s ease; }
+.ob-box .ob-icon { font-size: 56px; margin-bottom: 16px; }
+.ob-box h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.ob-box p { color: var(--tn); font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+.ob-tasks { text-align: left; background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.1); border-radius: 14px; padding: 14px; margin-bottom: 20px; }
+.ob-tasks h3 { font-size: 13px; color: var(--ck); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.ob-task { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; }
+.ob-task:last-child { border-bottom: none; }
+.ob-task input { width: 18px; height: 18px; accent-color: var(--ck); }
+.ob-task label { flex: 1; font-size: 14px; cursor: pointer; }
+.btn { background: linear-gradient(135deg, var(--ck), var(--cc)); color: #fff; border: none; padding: 14px 40px; border-radius: 24px; font-size: 15px; font-weight: 800; cursor: pointer; transition: transform 0.2s; width: 100%; }
+.btn:hover { transform: scale(1.03); }
+.btn:active { transform: scale(0.97); }
 
-        .tasks-section { padding: 10px; max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
-        .tasks-section h2 { text-align: center; color: #00d4ff; margin-bottom: 12px; font-size: 1.2rem; }
-        .tasks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        @media (min-width: 600px) { .tasks-grid { grid-template-columns: repeat(3, 1fr); } }
+/* ===== DASHBOARD ===== */
+.top { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid rgba(78,205,196,0.06); flex-shrink: 0; }
+.top .brand { font-size: 12px; font-weight: 800; letter-spacing: 2px; color: var(--ck); }
+.badges { display: flex; gap: 8px; }
+.badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: rgba(78,205,196,0.06); border: 1px solid rgba(78,205,196,0.12); color: var(--ck); }
+.badge.fire { color: var(--cw); border-color: rgba(225,112,85,0.2); background: rgba(225,112,85,0.05); }
 
-        .task-card {
-            background: linear-gradient(145deg,rgba(0,100,200,.2),rgba(0,50,150,.3));
-            border: 2px solid #0066cc;
-            border-radius: 12px;
-            padding: 15px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all .25s;
-            position: relative;
-            overflow: hidden;
-            user-select: none;
-        }
-        .task-card:active { transform: scale(.95); }
-        .task-card.completed { background: linear-gradient(145deg,rgba(0,200,100,.2),rgba(0,150,50,.3)); border-color: #00cc66; }
-        .task-card:hover, .task-card.completed { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,212,255,.25); }
-        .task-icon { font-size: 2.2rem; margin-bottom: 6px; }
-        .task-name { font-size: .95rem; margin-bottom: 5px; }
-        .task-reward { font-size: .75rem; color: #ffd700; }
-        .task-check { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border: 2px solid rgba(255,255,255,.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .7rem; }
-        .task-card.completed .task-check { background: #00cc66; border-color: #00cc66; }
+.panel { background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.08); border-radius: 16px; padding: 16px; margin-bottom: 12px; position: relative; overflow: hidden; animation: fi 0.4s ease; }
+.panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ck), transparent); opacity: 0.4; }
+.pt { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--ck); margin-bottom: 12px; text-transform: uppercase; }
 
-        .footer { text-align: center; padding: 15px; position: relative; z-index: 1; }
-        .reset-btn { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.3); padding: 6px 16px; border-radius: 12px; color: #aaa; font-size: .8rem; cursor: pointer; }
+/* Quote */
+.quote { text-align: center; padding: 8px 0 4px; font-style: italic; color: var(--tn); font-size: 14px; line-height: 1.5; }
 
-        .reward-overlay, .celebration-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,.75);
-            display: none; align-items: center; justify-content: center;
-            z-index: 1000; padding: 20px;
-        }
-        .reward-overlay.active, .celebration-overlay.active { display: flex; }
-        .reward-modal {
-            background: linear-gradient(145deg,#1a1f4b,#0d1137);
-            border: 3px solid #ffd700; border-radius: 20px;
-            padding: 30px 25px; text-align: center; max-width: 320px;
-            width: 100%; animation: rewardPop .4s ease;
-        }
-        @keyframes rewardPop { 0%{transform:scale(0)} 70%{transform:scale(1.08)} 100%{transform:scale(1)} }
-        .reward-icon { font-size: 3rem; margin-bottom: 10px; animation: rewardBounce 1s infinite; }
-        @keyframes rewardBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-        .reward-title { font-size: 1.3rem; color: #ffd700; margin-bottom: 6px; }
-        .reward-desc { font-size: .9rem; color: #a0d8ff; margin-bottom: 10px; }
-        .reward-xp { font-size: 1rem; color: #00d4ff; margin-bottom: 15px; }
-        .reward-close {
-            background: linear-gradient(145deg,#ffd700,#ff8c00); border: none;
-            padding: 10px 30px; border-radius: 20px; font-size: 1rem;
-            color: #000; font-weight: bold; cursor: pointer;
-        }
+/* Mecha big */
+.mecha-big { text-align: center; padding: 8px 0 12px; }
+.mecha-big .emoji { font-size: 88px; line-height: 1; filter: drop-shadow(0 0 30px rgba(78,205,196,0.2)); animation: sf 5s ease-in-out infinite; }
+.mecha-big .name { font-size: 20px; font-weight: 800; margin-top: 4px; }
+.mecha-big .lvl { font-size: 13px; color: var(--td); margin-top: 2px; }
 
-        .celebration-modal { text-align: center; animation: celebrationIn .6s ease; }
-        @keyframes celebrationIn { 0%{transform:scale(0)rotate(-180deg)} 100%{transform:scale(1)rotate(0)} }
-        .celebration-medal { font-size: 5rem; animation: celebrationBounce 1s ease infinite; }
-        @keyframes celebrationBounce { 0%,100%{transform:translateY(0)scale(1)} 50%{transform:translateY(-20px)scale(1.15)} }
-        .celebration-title { font-size: 1.8rem; color: #ffd700; text-shadow: 0 0 20px #ffd700; margin-top: 10px; }
-        .celebration-subtitle { font-size: 1rem; margin-top: 6px; }
+/* Today's crystals */
+.tcs { display: flex; flex-wrap: wrap; gap: 8px; }
+.tc { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 14px; display: flex; align-items: center; gap: 6px; font-size: 13px; animation: cp 0.4s ease; }
+.tc .tci { font-size: 18px; }
+.tc .tcn { font-weight: 600; }
+.tc .tcc { font-weight: 800; }
 
-        .confetti { position: fixed; width: 8px; height: 8px; top: -10px; z-index: 2001; animation: confettiFall linear forwards; }
-        @keyframes confettiFall { 0%{transform:translateY(0)rotate(0);opacity:1} 100%{transform:translateY(100vh)rotate(720deg);opacity:0} }
-    </style>
+/* Task cards */
+.tasks { display: flex; flex-direction: column; gap: 10px; }
+.task { background: rgba(8,16,40,0.5); border: 1px solid rgba(78,205,196,0.06); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.2s ease; }
+.task:hover { border-color: rgba(78,205,196,0.15); transform: translateX(3px); }
+.task:active { transform: scale(0.98); }
+.task.done { border-color: rgba(85,239,196,0.15); background: rgba(85,239,196,0.03); }
+.task .t-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(78,205,196,0.06); border: 1px solid rgba(78,205,196,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.task.done .t-icon { background: rgba(85,239,196,0.08); border-color: rgba(85,239,196,0.15); }
+.task .t-info { flex: 1; min-width: 0; }
+.task .t-mecha { font-size: 14px; font-weight: 700; }
+.task .t-normal { font-size: 12px; color: var(--td); margin-top: 1px; }
+.task .t-crystal { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 8px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.task .t-check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--td); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: transparent; transition: all 0.3s; }
+.task.done .t-check { border-color: var(--cd); background: var(--cd); color: #070b14; }
+
+/* Earth status */
+.es { text-align: center; padding: 16px 8px; }
+.es .esi { font-size: 36px; margin-bottom: 8px; }
+.es .est { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+.es .esx { font-size: 13px; color: var(--tn); line-height: 1.6; }
+.es.prot .est { color: var(--cd); }
+.es.safe .est { color: var(--ck); }
+
+/* Finish button */
+.fin-btn { background: linear-gradient(135deg, rgba(78,205,196,0.12), rgba(116,185,255,0.08)); border: 1px solid rgba(78,205,196,0.18); color: var(--tb); padding: 14px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; margin-top: 8px; }
+.fin-btn:hover { transform: scale(1.02); border-color: rgba(78,205,196,0.3); }
+.fin-btn:active { transform: scale(0.98); }
+
+/* Collection */
+.coll { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ci { background: rgba(8,16,40,0.5); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 14px 6px; text-align: center; }
+.ci .cii { font-size: 26px; margin-bottom: 4px; }
+.ci .cin { font-size: 10px; color: var(--td); text-transform: uppercase; letter-spacing: 0.5px; }
+.ci .cic { font-size: 22px; font-weight: 800; margin-top: 4px; }
+
+/* Map */
+.mtrack { display: flex; align-items: center; justify-content: space-between; gap: 2px; padding: 8px 4px; }
+.mn { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+.mn .md { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.4s ease; }
+.mn.lock .md { background: rgba(30,40,60,0.6); border: 1px solid rgba(100,110,130,0.2); filter: grayscale(0.6); }
+.mn.open .md { background: rgba(78,205,196,0.08); border: 1px solid rgba(78,205,196,0.2); }
+.mn.here .md { background: rgba(247,183,49,0.1); border: 1px solid var(--cw); animation: glow 3s ease-in-out infinite; }
+.mn .mnm { font-size: 9px; color: var(--td); text-align: center; white-space: nowrap; }
+.mn.here .mnm { color: var(--cw); font-weight: 600; }
+.ml { flex: 1; height: 2px; background: rgba(78,205,196,0.06); min-width: 8px; margin-top: -16px; }
+.ml.on { background: linear-gradient(90deg, var(--ck), var(--cw)); }
+
+/* ===== HISTORY ===== */
+#history .scroll { padding-top: 8px; }
+.hday { background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.08); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+.hday .hh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.hday .hd { font-size: 14px; font-weight: 700; }
+.hday .hs { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 10px; }
+.hday .hs.done { color: var(--cd); background: rgba(85,239,196,0.08); }
+.hday .hs.part { color: var(--ck); background: rgba(78,205,196,0.08); }
+.hday .hs.miss { color: var(--td); background: rgba(255,255,255,0.03); }
+.hday .htl { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.hday .ht { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: rgba(255,255,255,0.03); color: var(--td); }
+.hday .ht.done { background: rgba(85,239,196,0.06); color: var(--cd); }
+.hday .hcl { display: flex; flex-wrap: wrap; gap: 8px; }
+.hday .hc { font-size: 11px; display: flex; align-items: center; gap: 3px; }
+.cub { background: linear-gradient(135deg, rgba(162,155,254,0.1), rgba(162,155,254,0.04)); border: 1px solid rgba(162,155,254,0.18); color: var(--tb); padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
+.cub:hover { transform: scale(1.02); border-color: rgba(162,155,254,0.35); }
+.cub:active { transform: scale(0.98); }
+
+/* ===== SETTINGS ===== */
+#settings .scroll { padding-top: 8px; }
+.srow { background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.06); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+.srow h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.srow p { font-size: 12px; color: var(--td); }
+.srow .sval { font-size: 12px; font-weight: 700; color: var(--cd); float: right; }
+
+.task-list-edit { margin-top: 10px; }
+.tle-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.tle-item:last-child { border-bottom: none; }
+.tle-item .tle-icon { font-size: 18px; }
+.tle-item .tle-name { flex: 1; font-size: 13px; }
+.tle-item .tle-del { background: rgba(255,100,100,0.08); color: #ff6464; border: 1px solid rgba(255,100,100,0.15); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; }
+.tle-item .tle-del:active { transform: scale(0.95); }
+
+.add-task-form { display: flex; gap: 8px; margin-top: 10px; }
+.add-task-form input { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(78,205,196,0.1); border-radius: 10px; padding: 10px 12px; color: var(--tb); font-size: 13px; font-family: inherit; }
+.add-task-form input::placeholder { color: var(--td); }
+.add-task-form select { background: rgba(255,255,255,0.04); border: 1px solid rgba(78,205,196,0.1); border-radius: 10px; padding: 10px; color: var(--tb); font-size: 13px; }
+.add-task-form .add-btn { background: var(--ck); color: #070b14; border: none; padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.add-task-form .add-btn:active { transform: scale(0.95); }
+
+.export-btn { background: rgba(78,205,196,0.08); border: 1px solid rgba(78,205,196,0.15); color: var(--ck); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
+.export-btn:active { transform: scale(0.98); }
+.import-area { margin-top: 8px; }
+.import-area input[type="file"] { display: none; }
+.import-area label { display: block; background: rgba(255,255,255,0.03); border: 1px dashed rgba(78,205,196,0.15); color: var(--tn); padding: 12px; border-radius: 12px; font-size: 13px; text-align: center; cursor: pointer; }
+.import-area label:active { background: rgba(78,205,196,0.05); }
+
+.danger-btn { background: rgba(255,100,100,0.06); color: #ff6464; border: 1px solid rgba(255,100,100,0.12); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 16px; }
+.danger-btn:active { transform: scale(0.98); }
+
+/* ===== EXIT ===== */
+#exit { position: fixed; inset: 0; background: rgba(7,11,20,0.95); backdrop-filter: blur(20px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 24px; }
+#exit.on { display: flex; }
+.ec { max-width: 380px; width: 100%; text-align: center; animation: su 0.5s ease; }
+.ec .ei { font-size: 52px; margin-bottom: 14px; }
+.ec h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.ec .esub { color: var(--tn); font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+.ec .elist { background: rgba(255,255,255,0.03); border: 1px solid rgba(78,205,196,0.08); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; text-align: left; max-height: 200px; overflow-y: auto; }
+.ec .elist li { list-style: none; padding: 5px 0; font-size: 13px; color: var(--tn); border-bottom: 1px solid rgba(255,255,255,0.03); }
+.ec .elist li:last-child { border-bottom: none; }
+.ec .elist li::before { content: '✓ '; color: var(--cd); font-weight: 700; }
+.ec .emsg { color: var(--td); font-size: 14px; line-height: 1.7; margin-bottom: 18px; }
+.ebtn { background: linear-gradient(135deg, var(--ck), var(--cc)); color: #fff; border: none; padding: 14px 36px; border-radius: 24px; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+.ebtn:hover { transform: scale(1.03); }
+.ebtn:active { transform: scale(0.97); }
+
+/* Rest */
+#rest { justify-content: center; align-items: center; background: var(--bg-deep); z-index: 2000; }
+.rb { text-align: center; }
+.rb .ri { font-size: 48px; margin-bottom: 14px; opacity: 0.5; }
+.rb h2 { font-size: 18px; font-weight: 700; color: var(--td); margin-bottom: 6px; }
+.rb p { color: var(--td); font-size: 14px; }
+
+/* Modal */
+.mod { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(16px); display: none; justify-content: center; align-items: center; z-index: 500; padding: 20px; }
+.mod.on { display: flex; }
+.mod-box { background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.12); border-radius: 20px; padding: 28px 22px; max-width: 380px; width: 100%; text-align: center; position: relative; overflow: hidden; animation: su 0.4s ease; }
+.mod-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ck), transparent); }
+.mod-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+.mod-box p { color: var(--tn); font-size: 14px; margin-bottom: 16px; }
+.cup { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 14px; margin: 14px 0; text-align: left; }
+.cup h4 { font-size: 11px; color: var(--td); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.cup .ci { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 13px; }
+.cup .ci .cii { font-size: 16px; }
+.act { background: linear-gradient(135deg, var(--ck), var(--cc)); color: #fff; border: none; padding: 12px 28px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; }
+.act:active { transform: scale(0.97); }
+.can { background: transparent; color: var(--td); border: 1px solid rgba(255,255,255,0.1); padding: 12px 28px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; margin-left: 8px; }
+.can:active { transform: scale(0.97); }
+
+/* Toast */
+.toast { position: fixed; top: 55px; left: 50%; transform: translateX(-50%) translateY(-20px); opacity: 0; background: rgba(14,22,40,0.95); border: 1px solid rgba(78,205,196,0.12); border-radius: 12px; padding: 12px 20px; font-size: 13px; color: var(--tb); z-index: 400; transition: all 0.3s ease; pointer-events: none; max-width: 320px; text-align: center; line-height: 1.5; }
+.toast.on { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* Bottom nav */
+.nav { display: flex; justify-content: space-around; padding: 6px 0 calc(6px + env(safe-area-inset-bottom)); background: rgba(7,11,20,0.95); border-top: 1px solid rgba(78,205,196,0.05); flex-shrink: 0; }
+.nb { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px; background: none; border: none; color: var(--td); font-family: inherit; font-size: 10px; font-weight: 600; cursor: pointer; transition: color 0.2s; }
+.nb .ni { font-size: 20px; transition: transform 0.2s; }
+.nb:active .ni { transform: scale(0.9); }
+.nb.on { color: var(--ck); }
+
+/* Log */
+.log-entry { background: var(--bg-panel); border-left: 3px solid var(--ck); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
+.log-entry.grow { border-left-color: var(--cd); }
+.log-entry.catch { border-left-color: var(--ci); }
+.log-entry .lt { font-size: 10px; color: var(--td); margin-bottom: 2px; }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(78,205,196,0.08); border-radius: 2px; }
+</style>
 </head>
 <body>
-    <div class="stars" id="stars"></div>
 
-    <div class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="开关音效">🔊</div>
+<canvas id="starfield"></canvas>
+<div class="nebula n1"></div>
+<div class="nebula n2"></div>
+<div class="nebula n3"></div>
+<div class="earth-far"></div>
 
-    <div class="header">
-        <h1>🚀 Sheldon · 机甲探险任务站</h1>
-        <div class="date-display" id="dateDisplay"></div>
+<div class="toast" id="toast"></div>
+
+<!-- SPLASH -->
+<div class="page active" id="splash">
+  <div class="sb">
+    <div class="sl">🌍</div>
+    <h1>EARTH HQ</h1>
+    <p>PROTECT CIVILIZATION</p>
+    <div class="sbar"><div class="sbf"></div></div>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="page" id="onboard">
+  <div class="ob-box" id="ob-box">
+    <!-- Step 1: Welcome -->
+    <div id="ob-step-1">
+      <div class="ob-icon">🌍</div>
+      <h2>Welcome, Guardian</h2>
+      <p>You protect Earth civilization.<br>Every day, your learning makes our planet safer.</p>
+      <button class="btn" onclick="EarthHQ.Onboard.next()">Start →</button>
+    </div>
+    <!-- Step 2: Choose tasks -->
+    <div id="ob-step-2" style="display:none;">
+      <div class="ob-icon">📋</div>
+      <h2>Choose Your Missions</h2>
+      <p>Pick the tasks you want to track.<br>You can change these later.</p>
+      <div class="ob-tasks" id="ob-tasks"></div>
+      <button class="btn" onclick="EarthHQ.Onboard.finish()">Begin →</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="dashboard">
+  <div class="top">
+    <div class="brand">🌍 EARTH HQ</div>
+    <div class="badges">
+      <div class="badge fire" id="bd-streak">🔥 0</div>
+      <div class="badge" id="bd-level">🌱 Lv.1</div>
+    </div>
+  </div>
+  <div class="scroll" id="dash-scroll">
+    <!-- Daily Quote -->
+    <div class="panel">
+      <div class="quote" id="daily-quote">"Every day is a new chance to grow."</div>
     </div>
 
-    <div class="mecha-pal">
-        <div class="mecha-avatar">
-            <svg class="mecha-svg" viewBox="0 0 120 120">
-                <rect x="35" y="15" width="50" height="40" rx="5" fill="#4a90d9" stroke="#00d4ff" stroke-width="2"/>
-                <rect x="42" y="28" width="14" height="8" rx="2" fill="#00ff88"/>
-                <rect x="64" y="28" width="14" height="8" rx="2" fill="#00ff88"/>
-                <line x1="45" y1="15" x2="40" y2="5" stroke="#ffd700" stroke-width="2"/>
-                <circle cx="40" cy="5" r="3" fill="#ffd700"/>
-                <line x1="75" y1="15" x2="80" y2="5" stroke="#ffd700" stroke-width="2"/>
-                <circle cx="80" cy="5" r="3" fill="#ffd700"/>
-                <rect x="40" y="55" width="40" height="35" rx="5" fill="#2a5a9e" stroke="#00d4ff" stroke-width="2"/>
-                <circle cx="60" cy="72" r="10" fill="#ffd700" opacity=".8">
-                    <animate attributeName="opacity" values=".5;1;.5" dur="2s" repeatCount="indefinite"/>
-                </circle>
-                <rect x="20" y="58" width="18" height="25" rx="3" fill="#4a90d9" stroke="#00d4ff" stroke-width="1.5"/>
-                <rect x="82" y="58" width="18" height="25" rx="3" fill="#4a90d9" stroke="#00d4ff" stroke-width="1.5"/>
-                <rect x="42" y="90" width="14" height="22" rx="3" fill="#3a7ac5" stroke="#00d4ff" stroke-width="1.5"/>
-                <rect x="64" y="90" width="14" height="22" rx="3" fill="#3a7ac5" stroke="#00d4ff" stroke-width="1.5"/>
-                <polygon points="46,112 49,120 52,112" fill="#ff6b00" opacity=".7">
-                    <animate attributeName="opacity" values=".4;1;.4" dur=".4s" repeatCount="indefinite"/>
-                </polygon>
-                <polygon points="68,112 71,120 74,112" fill="#ff6b00" opacity=".7">
-                    <animate attributeName="opacity" values=".4;1;.4" dur=".4s" repeatCount="indefinite"/>
-                </polygon>
-            </svg>
-        </div>
-        <div class="mecha-info">
-            <div class="mecha-name">⚡ 雷霆机甲</div>
-            <div class="mecha-level" id="mechaLevel">等级 1</div>
-            <div class="xp-bar-container">
-                <div class="xp-bar" id="xpBar"></div>
-            </div>
-            <div class="xp-text" id="xpText">0 / 100 XP</div>
-        </div>
+    <!-- Mecha -->
+    <div class="panel">
+      <div class="mecha-big">
+        <div class="emoji" id="mecha-emoji">🌱</div>
+        <div class="name" id="mecha-name">Seed</div>
+        <div class="lvl" id="mecha-lvl">Guardian Level 1</div>
+      </div>
     </div>
 
-    <div class="streak-counter">
-        <span class="streak-flame">🔥</span> 连续 <span id="streakNum">0</span> 天
+    <!-- Today's Contribution -->
+    <div class="panel">
+      <div class="pt">✨ Today's Contribution</div>
+      <div class="tcs" id="today-crystals">
+        <p style="color:var(--td);font-size:13px;">Complete a mission to add your first crystal.</p>
+      </div>
     </div>
 
-    <div class="medal-wall">
-        <h3>🏆 勋章墙</h3>
-        <div class="medals-container" id="medalsContainer">
-            <div class="medal today-medal locked" id="todayMedal" title="今日全勤">🌟</div>
-            <div class="medal locked" title="3天连续">⭐</div>
-            <div class="medal locked" title="7天连续">🌙</div>
-            <div class="medal locked" title="14天连续">💎</div>
-            <div class="medal locked" title="30天连续">👑</div>
-        </div>
+    <!-- Tasks -->
+    <div class="panel">
+      <div class="pt">📋 Make Your Contribution (<span id="task-count">0</span>)</div>
+      <div class="tasks" id="task-list"></div>
     </div>
 
-    <div class="progress-overview">
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-            <div class="progress-text" id="progressText">0 / 5</div>
-        </div>
+    <!-- Earth Status -->
+    <div class="panel">
+      <div class="pt">🌍 Earth Status</div>
+      <div class="es" id="earth-status">
+        <div class="esi">🌍</div>
+        <div class="est">Earth Needs You</div>
+        <div class="esx">Every mission makes Earth safer.<br>Your contribution matters.</div>
+      </div>
+      <button class="fin-btn" id="fin-btn" onclick="EarthHQ.App.finishDay()">Finish My Day →</button>
     </div>
 
-    <div class="tasks-section">
-        <h2>📋 今日探险任务</h2>
-        <div class="tasks-grid" id="tasksGrid"></div>
+    <!-- Collection -->
+    <div class="panel">
+      <div class="pt">📊 My Collection</div>
+      <div class="coll" id="collection"></div>
     </div>
 
-    <div class="footer">
-        <button class="reset-btn" onclick="resetDay()">🔄 重置今日</button>
+    <!-- Journey -->
+    <div class="panel">
+      <div class="pt">🗺️ Journey</div>
+      <div class="mtrack" id="journey"></div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nb on" data-p="dashboard"><span class="ni">🌍</span><span>Home</span></button>
+    <button class="nb" data-p="history"><span class="ni">📅</span><span>History</span></button>
+    <button class="nb" data-p="settings"><span class="ni">⚙️</span><span>Setup</span></button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="page" id="history">
+  <div class="top">
+    <div class="brand">🌍 EARTH HQ</div>
+    <div class="badges"><div class="badge">📅 History</div></div>
+  </div>
+  <div class="scroll">
+    <div style="margin-bottom:8px;"><h2 style="font-size:18px;font-weight:800;">Last 7 Days</h2><p style="color:var(--td);font-size:12px;margin-top:2px;">Your contribution history</p></div>
+    <div id="history-list"></div>
+  </div>
+  <div class="nav">
+    <button class="nb" data-p="dashboard"><span class="ni">🌍</span><span>Home</span></button>
+    <button class="nb on" data-p="history"><span class="ni">📅</span><span>History</span></button>
+    <button class="nb" data-p="settings"><span class="ni">⚙️</span><span>Setup</span></button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="settings">
+  <div class="top">
+    <div class="brand">🌍 EARTH HQ</div>
+    <div class="badges"><div class="badge">⚙️ Setup</div></div>
+  </div>
+  <div class="scroll">
+    <div style="margin-bottom:8px;"><h2 style="font-size:18px;font-weight:800;">Setup</h2><p style="color:var(--td);font-size:12px;margin-top:2px;">Customize your guardian</p></div>
+
+    <div class="srow">
+      <div><h4>🔊 Sound Effects</h4><p>Soft chimes when you contribute</p></div>
+      <span class="sval">ON</span>
     </div>
 
-    <div class="reward-overlay" id="rewardOverlay" onclick="closeReward(event)">
-        <div class="reward-modal" onclick="event.stopPropagation()">
-            <div class="reward-icon" id="rewardIcon">🎉</div>
-            <div class="reward-title" id="rewardTitle">任务完成！</div>
-            <div class="reward-desc" id="rewardDesc"></div>
-            <div class="reward-xp" id="rewardXp">+20 XP</div>
-            <button class="reward-close" onclick="closeReward()">太棒了！</button>
-        </div>
+    <div class="srow">
+      <div><h4>📋 Your Missions</h4><p>Add, remove, or edit daily tasks</p></div>
+    </div>
+    <div class="task-list-edit" id="task-editor"></div>
+    <div class="add-task-form" id="add-task-form">
+      <input type="text" id="new-task-name" placeholder="Mission name (e.g. Drawing)">
+      <select id="new-task-crystal">
+        <option value="Knowledge">📚 Knowledge</option>
+        <option value="Wisdom">🏛 Wisdom</option>
+        <option value="Insight">🔭 Insight</option>
+        <option value="Logic">🧠 Logic</option>
+        <option value="Creativity">🎵 Creativity</option>
+        <option value="Discipline">💪 Discipline</option>
+      </select>
+      <button class="add-btn" onclick="EarthHQ.App.addTask()">Add</button>
     </div>
 
-    <div class="celebration-overlay" id="celebrationOverlay" onclick="closeCelebration()">
-        <div class="celebration-modal" onclick="event.stopPropagation()">
-            <div class="celebration-medal">🌟</div>
-            <div class="celebration-title">🎊 全勤达成！</div>
-            <div class="celebration-subtitle">今日所有任务完成！<br>获得今日勋章 + 大量经验！</div>
-            <br>
-            <button class="reward-close" onclick="closeCelebration()">继续加油！</button>
-        </div>
+    <div class="srow" style="margin-top:12px;">
+      <div><h4>💾 Data Backup</h4><p>Export or import your progress</p></div>
     </div>
+    <button class="export-btn" onclick="EarthHQ.App.exportData()">📥 Export Data</button>
+    <div class="import-area">
+      <input type="file" id="import-file" accept=".json" onchange="EarthHQ.App.importData(this)">
+      <label for="import-file">📤 Tap to import backup file</label>
+    </div>
+
+    <button class="danger-btn" onclick="EarthHQ.App.reset()">🔄 Reset All Data</button>
+  </div>
+  <div class="nav">
+    <button class="nb" data-p="dashboard"><span class="ni">🌍</span><span>Home</span></button>
+    <button class="nb" data-p="history"><span class="ni">📅</span><span>History</span></button>
+    <button class="nb on" data-p="settings"><span class="ni">⚙️</span><span>Setup</span></button>
+  </div>
+</div>
+
+<!-- EXIT -->
+<div id="exit">
+  <div class="ec">
+    <div class="ei" id="exit-icon">🌍</div>
+    <h2 id="exit-title">All done for today.</h2>
+    <p class="esub" id="exit-sub">You powered up. Good work.</p>
+    <ul class="elist" id="exit-list"></ul>
+    <p class="emsg" id="exit-msg">Now go play, read, draw, or rest.<br>See you tomorrow.</p>
+    <button class="ebtn" onclick="EarthHQ.App.sayGoodbye()">See you tomorrow 👋</button>
+  </div>
+</div>
+
+<!-- CATCHUP MODAL -->
+<div class="mod" id="cu-mod">
+  <div class="mod-box">
+    <div style="font-size:40px;margin-bottom:10px;">📅</div>
+    <h3 id="cu-title">Catch Up</h3>
+    <p id="cu-desc">Add contributions for this day?</p>
+    <div class="cup" id="cu-preview"></div>
+    <div>
+      <button class="act" onclick="EarthHQ.CatchUp.confirm()">Add Contributions</button>
+      <button class="can" onclick="EarthHQ.UI.closeMod('cu-mod')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- REST -->
+<div class="page" id="rest">
+  <div class="rb">
+    <div class="ri">🌙</div>
+    <h2>Rest mode</h2>
+    <p>Tomorrow is a new day.<br>Be awesome.</p>
+  </div>
+</div>
 
 <script>
-// ============ 音效系统 ============
-let soundEnabled = true;
-let audioCtx = null;
+// ============================================================
+//  EARTH HQ  v1.6
+//  Three-perspective design: Product Manager + Child + Mom
+// ============================================================
 
-function getAudioCtx() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    return audioCtx;
-}
+const EarthHQ = {};
 
-function toggleSound() {
-    soundEnabled = !soundEnabled;
-    document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
-    if (soundEnabled) {
-        getAudioCtx().resume();
-        playBeep(523, 0.1, 0.3);
+// ===== DATA =====
+EarthHQ.Data = {
+  quotes: [
+    "Every day is a new chance to grow.",
+    "Small steps lead to big changes.",
+    "Your effort makes Earth safer.",
+    "Learning is your superpower.",
+    "One mission at a time.",
+    "You are building something great.",
+    "Today's work is tomorrow's strength.",
+    "Keep going. You got this.",
+    "Knowledge is your crystal.",
+    "Every book is a new world.",
+    "Growth happens one day at a time.",
+    "You are stronger than yesterday."
+  ],
+
+  defaultTasks: [
+    { id: 'read_cn', name: 'Chinese Reading', mecha: 'PRESERVE ANCIENT WISDOM', crystal: 'Wisdom', icon: '📜' },
+    { id: 'read_en', name: 'English Reading', mecha: 'ALIEN CODE', crystal: 'Knowledge', icon: '📚' },
+    { id: 'piano', name: 'Piano', mecha: 'SOUND CALIBRATE', crystal: 'Creativity', icon: '🎹' },
+    { id: 'longtext', name: 'Long Text Challenge', mecha: 'UNLOCK STRATEGIC INSIGHT', crystal: 'Insight', icon: '🔭' },
+    { id: 'math', name: 'Math', mecha: 'POWER MATH', crystal: 'Logic', icon: '🧠' },
+    { id: 'wash', name: 'Wash Up', mecha: 'DEFENSE CLEAN', crystal: 'Discipline', icon: '🛁' },
+    { id: 'journal', name: 'Daily Journal', mecha: 'RECORD HISTORY', crystal: 'Wisdom', icon: '📝' }
+  ],
+
+  crystals: {
+    Knowledge:  { name: 'Knowledge',  icon: '📚', color: '#4ecdc4' },
+    Wisdom:     { name: 'Wisdom',     icon: '🏛', color: '#e17055' },
+    Insight:    { name: 'Insight',    icon: '🔭', color: '#a29bfe' },
+    Logic:      { name: 'Logic',      icon: '🧠', color: '#ff9f43' },
+    Creativity: { name: 'Creativity', icon: '🎵', color: '#74b9ff' },
+    Discipline: { name: 'Discipline', icon: '💪', color: '#55efc4' }
+  },
+
+  levels: [
+    { name: 'Seed',    emoji: '🌱', desc: 'A small seed of power' },
+    { name: 'Sprout',  emoji: '🌿', desc: 'First leaves appear' },
+    { name: 'Grow',    emoji: '🌲', desc: 'Growing stronger each day' },
+    { name: 'Strong',  emoji: '🌳', desc: 'Wind cannot break you' },
+    { name: 'Bloom',   emoji: '🌸', desc: 'Beauty and strength' },
+    { name: 'Shine',   emoji: '⭐', desc: 'Light for others' },
+    { name: 'Legend',  emoji: '👑', desc: 'Your story inspires' }
+  ],
+
+  nodes: [
+    { name: 'Seed',    icon: '🌱' },
+    { name: 'Sprout',  icon: '🌿' },
+    { name: 'Grow',    icon: '🌲' },
+    { name: 'Strong',  icon: '🌳' },
+    { name: 'Bloom',   icon: '🌸' },
+    { name: 'Shine',   icon: '⭐' },
+    { name: 'Legend',  icon: '👑' }
+  ],
+
+  doneMsgs: {
+    read_cn: 'Wisdom Crystal added. Ancient wisdom restored. Earth civilization grows stronger.',
+    read_en: 'Knowledge Crystal added. Language decoded.',
+    piano: 'Creativity Crystal added. Harmony achieved.',
+    longtext: 'Insight Crystal added. Strategic insight gained. Your mecha is smarter today.',
+    math: 'Logic Crystal added. Calculation complete.',
+    wash: 'Discipline Crystal added. Defense systems clean.',
+    journal: 'Wisdom Crystal added. History recorded.'
+  }
+};
+
+// ===== STATE =====
+EarthHQ.State = {
+  s: {
+    initialized: false,
+    tasks: [],
+    history: {},
+    crystals: { Knowledge: 0, Wisdom: 0, Insight: 0, Logic: 0, Creativity: 0, Discipline: 0 },
+    todayDone: {},
+    todayCrystals: {},
+    mechaLevel: 1,
+    streak: 0,
+    lastDate: null,
+    finishedToday: false,
+    log: [],
+    goodbye: false
+  },
+
+  init() {
+    const saved = localStorage.getItem('EHQ_v16');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        this.s = { ...this.s, ...parsed };
+      } catch (e) {
+        console.log('Resetting corrupted data');
+      }
     }
-}
+    this.checkDay();
+  },
 
-function playBeep(freq, duration, vol) {
-    if (!soundEnabled) return;
-    try {
-        const ctx = getAudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(vol || 0.15, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + duration);
-    } catch(e) {}
-}
-
-function playClick() { playBeep(600, 0.08, 0.1); }
-
-function playTaskComplete() {
-    if (!soundEnabled) return;
-    [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => playBeep(f, 0.2, 0.2), i * 120));
-}
-
-function playLevelUp() {
-    if (!soundEnabled) return;
-    [523, 659, 784, 1047, 1319, 1047, 1319].forEach((f, i) => setTimeout(() => playBeep(f, 0.25, 0.2), i * 150));
-}
-
-function playCelebration() {
-    if (!soundEnabled) return;
-    [523, 659, 784].forEach(f => playBeep(f, 0.4, 0.15));
-    setTimeout(() => [659, 784, 1047].forEach(f => playBeep(f, 0.4, 0.15)), 200);
-    setTimeout(() => [784, 988, 1175].forEach(f => playBeep(f, 0.5, 0.15)), 400);
-    setTimeout(() => [1047, 1319, 1568].forEach(f => playBeep(f, 0.6, 0.2)), 600);
-    setTimeout(() => [523, 659, 784, 1047, 1319].forEach(f => playBeep(f, 0.8, 0.12)), 900);
-}
-
-function playCancel() { playBeep(300, 0.15, 0.1); }
-
-// ============ 数据 ============
-const tasks = [
-    { id: 'reading-cn', name: '中文阅读', icon: '📖', reward: '📚 知识碎片', xp: 20 },
-    { id: 'reading-en', name: '英文阅读', icon: '📕', reward: '🌍 语言宝石', xp: 20 },
-    { id: 'piano', name: '弹琴', icon: '🎹', reward: '🎵 旋律能量', xp: 25 },
-    { id: 'long-text', name: '长文挑战', icon: '📝', reward: '💪 勇气徽章', xp: 25 },
-    { id: 'shower', name: '洗澡', icon: '🚿', reward: '✨ 洁净之星', xp: 10 }
-];
-const rewardsPool = ['⚡ 能量核心','🔧 机甲零件','🛡️ 防护盾','🚀 推进器','🔋 超级电池','💠 晶体矿','🎯 瞄准镜','🔮 能量球'];
-
-let completedTasks = new Set();
-let totalXP = parseInt(localStorage.getItem('totalXP')) || 0;
-let currentLevel = parseInt(localStorage.getItem('currentLevel')) || 1;
-let streak = parseInt(localStorage.getItem('streak')) || 0;
-let medals = JSON.parse(localStorage.getItem('medals')) || {};
-let todayCompleted = localStorage.getItem('todayCompleted') === 'true';
-let lastDate = localStorage.getItem('lastDate') || '';
-
-// ============ 初始化 ============
-function init() {
-    createStars();
-    updateDate();
-    checkNewDay();
-    renderTasks();
-    updateUI();
-}
-
-function createStars() {
-    const container = document.getElementById('stars');
-    for (let i = 0; i < 80; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.animationDelay = Math.random() * 2 + 's';
-        const size = Math.random() * 2 + 1;
-        star.style.width = star.style.height = size + 'px';
-        container.appendChild(star);
+  checkDay() {
+    const today = this._ds(new Date());
+    const s = this.s;
+    if (s.lastDate && s.lastDate !== today) {
+      if (Object.keys(s.todayDone).length > 0) {
+        s.history[s.lastDate] = { ...s.todayDone };
+      }
+      const yest = this._ds(new Date(Date.now() - 86400000));
+      if (!s.history[yest] && s.lastDate !== yest) s.streak = 0;
+      s.todayDone = {};
+      s.todayCrystals = {};
+      s.finishedToday = false;
+      s.goodbye = false;
     }
-}
+    s.lastDate = today;
+    this.save();
+  },
 
-function updateDate() {
-    const now = new Date();
-    document.getElementById('dateDisplay').textContent = now.toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
-}
+  _ds(d) { return d.toISOString().split('T')[0]; },
+  today() { return this._ds(new Date()); },
 
-function checkNewDay() {
-    const today = new Date().toDateString();
-    if (lastDate !== today) {
-        completedTasks.clear();
-        todayCompleted = false;
-        lastDate = today;
-        saveProgress();
-    }
-}
+  save() { localStorage.setItem('EHQ_v16', JSON.stringify(this.s)); },
 
-// ============ 渲染 ============
-function renderTasks() {
-    const grid = document.getElementById('tasksGrid');
-    grid.innerHTML = '';
-    tasks.forEach(task => {
-        const card = document.createElement('div');
-        card.className = 'task-card' + (completedTasks.has(task.id) ? ' completed' : '');
-        card.onclick = () => toggleTask(task);
-        card.innerHTML = `
-            <div class="task-check">${completedTasks.has(task.id) ? '✓' : ''}</div>
-            <div class="task-icon">${task.icon}</div>
-            <div class="task-name">${task.name}</div>
-            <div class="task-reward">${task.reward} +${task.xp}XP</div>
-        `;
-        grid.appendChild(card);
+  addCrystal(type, count) {
+    this.s.crystals[type] = (this.s.crystals[type] || 0) + count;
+    this.s.todayCrystals[type] = (this.s.todayCrystals[type] || 0) + count;
+  },
+
+  addLog(type, text) {
+    this.s.log.push({
+      time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      type, text
     });
-}
+    if (this.s.log.length > 100) this.s.log.shift();
+    this.save();
+  },
 
-// ============ 任务切换 ============
-function toggleTask(task) {
-    if (completedTasks.has(task.id)) {
-        completedTasks.delete(task.id);
-        todayCompleted = false;
-        playCancel();
-    } else {
-        completedTasks.add(task.id);
-        playTaskComplete();
-        showReward(task);
-        if (completedTasks.size === tasks.length) {
-            setTimeout(() => completeAllTasks(), 600);
+  getDayStatus(dateStr) {
+    const s = this.s;
+    const isToday = dateStr === this.today();
+    let record = isToday ? s.todayDone : (s.history[dateStr] || {});
+    const done = Object.values(record).filter(Boolean).length;
+    const total = s.tasks.length || EarthHQ.Data.defaultTasks.length;
+    return { done, total, record, isToday };
+  },
+
+  reset() { localStorage.removeItem('EHQ_v16'); location.reload(); }
+};
+
+// ===== SOUND =====
+EarthHQ.Sound = {
+  ctx: null,
+  _e() {
+    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+  },
+  _t(f, type, dur, vol, delay) {
+    this._e();
+    const t = this.ctx.currentTime + (delay || 0);
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(t); o.stop(t + dur);
+  },
+  click() { this._t(660, 'sine', 0.06, 0.04, 0); },
+  done() { this._t(523, 'sine', 0.2, 0.05, 0); this._t(659, 'sine', 0.2, 0.05, 0.1); },
+  allDone() { [523, 659, 784, 1047].forEach((f, i) => this._t(f, 'sine', 0.35, 0.06, i * 0.12)); },
+  catchup() { [659, 784, 1047].forEach((f, i) => this._t(f, 'sine', 0.3, 0.05, i * 0.1)); }
+};
+
+// ===== ONBOARDING =====
+EarthHQ.Onboard = {
+  step: 1,
+
+  show() {
+    EarthHQ.UI.go('onboard');
+    this.renderTasks();
+  },
+
+  renderTasks() {
+    const box = document.getElementById('ob-tasks');
+    box.innerHTML = '<h3>Select your daily missions</h3>';
+    EarthHQ.Data.defaultTasks.forEach((t, i) => {
+      const c = EarthHQ.Data.crystals[t.crystal];
+      box.innerHTML += `
+        <div class="ob-task" onclick="document.getElementById('ob-check-${i}').click()">
+          <input type="checkbox" id="ob-check-${i}" checked onclick="event.stopPropagation()">
+          <label for="ob-check-${i}" onclick="event.stopPropagation()">
+            ${t.icon} ${t.name} → <span style="color:${c.color}">${c.icon} ${c.name}</span>
+          </label>
+        </div>
+      `;
+    });
+  },
+
+  next() {
+    document.getElementById('ob-step-1').style.display = 'none';
+    document.getElementById('ob-step-2').style.display = 'block';
+  },
+
+  finish() {
+    const s = EarthHQ.State.s;
+    const tasks = [];
+    EarthHQ.Data.defaultTasks.forEach((t, i) => {
+      const cb = document.getElementById(`ob-check-${i}`);
+      if (cb && cb.checked) tasks.push({ ...t });
+    });
+    if (tasks.length === 0) tasks.push(...EarthHQ.Data.defaultTasks);
+    s.tasks = tasks;
+    s.initialized = true;
+    s.lastDate = EarthHQ.State.today();
+    EarthHQ.State.save();
+    EarthHQ.UI.go('dashboard');
+    EarthHQ.UI.render();
+  }
+};
+
+// ===== UI =====
+EarthHQ.UI = {
+  init() {
+    // Nav buttons
+    document.querySelectorAll('.nb').forEach(b => {
+      b.addEventListener('click', () => this.go(b.dataset.p));
+    });
+    // Unlock audio
+    document.addEventListener('click', () => EarthHQ.Sound._e(), { once: true });
+    // Stars
+    this.initStars();
+    // Route
+    setTimeout(() => {
+      const s = EarthHQ.State.s;
+      if (s.goodbye) this.go('rest');
+      else if (!s.initialized) EarthHQ.Onboard.show();
+      else { this.go('dashboard'); this.render(); }
+    }, 2200);
+  },
+
+  go(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nb').forEach(b => b.classList.toggle('on', b.dataset.p === id));
+    if (id === 'dashboard') this.render();
+    if (id === 'history') this.renderHistory();
+    if (id === 'settings') this.renderSettings();
+  },
+
+  render() {
+    const s = EarthHQ.State.s;
+    const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
+    const lv = EarthHQ.Data.levels[Math.min(s.mechaLevel - 1, 6)] || EarthHQ.Data.levels[0];
+    const doneCount = Object.values(s.todayDone).filter(Boolean).length;
+    const total = tasks.length;
+
+    // HUD
+    document.getElementById('bd-streak').textContent = `🔥 ${s.streak}`;
+    document.getElementById('bd-level').textContent = `${lv.emoji} Lv.${s.mechaLevel}`;
+
+    // Quote
+    const quotes = EarthHQ.Data.quotes;
+    document.getElementById('daily-quote').textContent = `"${quotes[Math.floor(Date.now() / 86400000) % quotes.length]}"`;
+
+    // Mecha
+    document.getElementById('mecha-emoji').textContent = lv.emoji;
+    document.getElementById('mecha-name').textContent = lv.name;
+    document.getElementById('mecha-lvl').textContent = `Guardian Level ${s.mechaLevel} — ${lv.desc}`;
+
+    // Today's crystals
+    const tc = document.getElementById('today-crystals');
+    const hasAny = Object.keys(s.todayCrystals).some(k => s.todayCrystals[k] > 0);
+    if (hasAny) {
+      tc.innerHTML = '';
+      Object.entries(s.todayCrystals).forEach(([type, count]) => {
+        if (count > 0) {
+          const c = EarthHQ.Data.crystals[type];
+          tc.innerHTML += `<div class="tc" style="border-color:${c.color}25;"><span class="tci">${c.icon}</span><span class="tcn">${c.name}</span><span class="tcc" style="color:${c.color}">+${count}</span></div>`;
         }
+      });
+    } else {
+      tc.innerHTML = '<p style="color:var(--td);font-size:13px;">Complete a mission to add your first crystal.</p>';
     }
-    saveProgress();
-    renderTasks();
-    updateUI();
-}
 
-function showReward(task) {
-    const bonus = rewardsPool[Math.floor(Math.random() * rewardsPool.length)];
-    document.getElementById('rewardIcon').textContent = task.icon;
-    document.getElementById('rewardTitle').textContent = task.name + ' 完成！';
-    document.getElementById('rewardDesc').textContent = '获得 ' + task.reward + ' 和 ' + bonus + '！';
-    document.getElementById('rewardXp').textContent = '+' + task.xp + ' XP';
-    document.getElementById('rewardOverlay').classList.add('active');
-    totalXP += task.xp;
-    checkLevelUp();
-}
-
-function closeReward(e) {
-    playClick();
-    document.getElementById('rewardOverlay').classList.remove('active');
-}
-
-function checkLevelUp() {
-    const need = currentLevel * 100;
-    if (totalXP >= need) {
-        totalXP -= need;
-        currentLevel++;
-        setTimeout(() => playLevelUp(), 300);
-    }
-    saveProgress();
-    updateUI();
-}
-
-function completeAllTasks() {
-    if (todayCompleted) return;
-    todayCompleted = true;
-    streak++;
-    medals[new Date().toDateString()] = true;
-    saveProgress();
-    playCelebration();
-    showCelebration();
-    updateUI();
-}
-
-function showCelebration() {
-    document.getElementById('celebrationOverlay').classList.add('active');
-    for (let i = 0; i < 40; i++) setTimeout(() => createConfetti(), i * 60);
-}
-
-function closeCelebration() {
-    playClick();
-    document.getElementById('celebrationOverlay').classList.remove('active');
-}
-
-function createConfetti() {
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    c.style.left = Math.random() * 100 + '%';
-    c.style.backgroundColor = ['#ffd700','#ff6b6b','#00d4ff','#00ff88','#ff8c00'][Math.floor(Math.random()*5)];
-    c.style.borderRadius = Math.random() > .5 ? '50%' : '0';
-    c.style.animationDuration = (Math.random() * 2 + 2) + 's';
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 4000);
-}
-
-// ============ UI 更新 ============
-function updateUI() {
-    document.getElementById('mechaLevel').textContent = '等级 ' + currentLevel;
-    const need = currentLevel * 100;
-    document.getElementById('xpBar').style.width = (totalXP / need * 100) + '%';
-    document.getElementById('xpText').textContent = totalXP + ' / ' + need + ' XP';
-    document.getElementById('streakNum').textContent = streak;
-    document.getElementById('progressFill').style.width = (completedTasks.size / tasks.length * 100) + '%';
-    document.getElementById('progressText').textContent = completedTasks.size + ' / ' + tasks.length;
-
-    const tm = document.getElementById('todayMedal');
-    tm.className = 'medal today-medal ' + (todayCompleted ? 'unlocked' : 'locked');
-
-    const streakMedals = [3, 7, 14, 30];
-    document.querySelectorAll('.medal:not(.today-medal)').forEach((m, i) => {
-        m.className = 'medal ' + (streak >= streakMedals[i] ? 'unlocked' : 'locked');
+    // Tasks
+    document.getElementById('task-count').textContent = total;
+    const list = document.getElementById('task-list');
+    list.innerHTML = '';
+    tasks.forEach(t => {
+      const done = s.todayDone[t.id];
+      const c = EarthHQ.Data.crystals[t.crystal];
+      const item = document.createElement('div');
+      item.className = `task ${done ? 'done' : ''}`;
+      item.innerHTML = `
+        <div class="t-icon">${t.icon}</div>
+        <div class="t-info">
+          <div class="t-mecha">${t.mecha}</div>
+          <div class="t-normal">${t.name}</div>
+        </div>
+        <div class="t-crystal" style="background:${c.color}10;color:${c.color};border:1px solid ${c.color}20;">${c.icon} ${c.name}</div>
+        <div class="t-check">${done ? '✓' : ''}</div>
+      `;
+      if (!done) {
+        item.addEventListener('click', () => {
+          EarthHQ.Sound.click();
+          item.style.transform = 'scale(0.97)';
+          setTimeout(() => EarthHQ.Task.complete(t.id), 120);
+        });
+      }
+      list.appendChild(item);
     });
-}
 
-function saveProgress() {
-    localStorage.setItem('totalXP', totalXP);
-    localStorage.setItem('currentLevel', currentLevel);
-    localStorage.setItem('streak', streak);
-    localStorage.setItem('medals', JSON.stringify(medals));
-    localStorage.setItem('todayCompleted', todayCompleted);
-    localStorage.setItem('completedTasks', JSON.stringify([...completedTasks]));
-    localStorage.setItem('lastDate', lastDate);
-}
+    // Earth status
+    const es = document.getElementById('earth-status');
+    if (doneCount === total && total > 0) {
+      es.className = 'es prot';
+      es.innerHTML = `<div class="esi">🌍</div><div class="est">Earth Civilization Protected Today</div><div class="esx">All systems are online.<br>Thank you, Commander.</div>`;
+    } else if (doneCount > 0) {
+      es.className = 'es safe';
+      es.innerHTML = `<div class="esi">🌍</div><div class="est">Earth Is Safer Today</div><div class="esx">Thank you for your contribution.<br>Every mission matters.</div>`;
+    } else {
+      es.className = 'es';
+      es.innerHTML = `<div class="esi">🌍</div><div class="est">Earth Needs You</div><div class="esx">Every mission makes Earth safer.<br>Your contribution matters.</div>`;
+    }
 
-function resetDay() {
-    playClick();
-    if (!confirm('确定重置今日任务？')) return;
-    completedTasks.clear();
-    todayCompleted = false;
-    streak = Math.max(0, streak - 1);
-    saveProgress();
-    renderTasks();
-    updateUI();
-}
+    // Collection
+    const cg = document.getElementById('collection');
+    cg.innerHTML = '';
+    Object.entries(EarthHQ.Data.crystals).forEach(([key, c]) => {
+      const count = s.crystals[key] || 0;
+      cg.innerHTML += `<div class="ci"><div class="cii">${c.icon}</div><div class="cin">${c.name}</div><div class="cic" style="color:${c.color}">${count}</div></div>`;
+    });
 
-function loadSavedData() {
-    const saved = localStorage.getItem('completedTasks');
-    if (saved) completedTasks = new Set(JSON.parse(saved));
-}
+    // Journey
+    const track = document.getElementById('journey');
+    track.innerHTML = '';
+    EarthHQ.Data.nodes.forEach((node, i) => {
+      const open = i < s.mechaLevel;
+      const here = i === s.mechaLevel - 1;
+      const n = document.createElement('div');
+      n.className = `mn ${open ? 'open' : 'lock'} ${here ? 'here' : ''}`;
+      n.innerHTML = `<div class="md">${open ? node.icon : '·'}</div><div class="mnm">${node.name}</div>`;
+      track.appendChild(n);
+      if (i < EarthHQ.Data.nodes.length - 1) {
+        const line = document.createElement('div');
+        line.className = `ml ${i < s.mechaLevel - 1 ? 'on' : ''}`;
+        track.appendChild(line);
+      }
+    });
+  },
 
-document.addEventListener('click', function unlockAudio() {
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    document.removeEventListener('click', unlockAudio);
-}, { once: true });
+  renderHistory() {
+    const list = document.getElementById('history-list');
+    list.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(Date.now() - i * 86400000);
+      const ds = EarthHQ.State._ds(d);
+      const st = EarthHQ.State.getDayStatus(ds);
+      const isToday = i === 0;
+      const dayName = isToday ? 'Today' : i === 1 ? 'Yesterday' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-loadSavedData();
-init();
+      const div = document.createElement('div');
+      div.className = 'hday';
+
+      let statusClass = 'miss', statusText = 'No record';
+      if (st.done === st.total && st.total > 0) { statusClass = 'done'; statusText = 'All contributed'; }
+      else if (st.done > 0) { statusClass = 'part'; statusText = `${st.done} contributed`; }
+
+      let html = `<div class="hh"><div class="hd">${dayName}</div><div class="hs ${statusClass}">${statusText}</div></div>`;
+
+      if (st.done > 0) {
+        html += '<div class="htl">';
+        const tasks = EarthHQ.State.s.tasks.length > 0 ? EarthHQ.State.s.tasks : EarthHQ.Data.defaultTasks;
+        tasks.forEach(t => {
+          if (st.record[t.id]) html += `<div class="ht done">${t.icon} ${t.name}</div>`;
+        });
+        html += '</div>';
+
+        const dayCrystals = {};
+        tasks.forEach(t => { if (st.record[t.id]) dayCrystals[t.crystal] = (dayCrystals[t.crystal] || 0) + 1; });
+        html += '<div class="hcl">';
+        Object.entries(dayCrystals).forEach(([type, count]) => {
+          const c = EarthHQ.Data.crystals[type];
+          html += `<div class="hc"><span>${c.icon}</span><span>${c.name} +${count}</span></div>`;
+        });
+        html += '</div>';
+      }
+
+      if (!isToday && st.done < st.total) {
+        html += `<button class="cub" onclick="EarthHQ.CatchUp.open('${ds}')">📅 Catch Up Available</button>`;
+      }
+
+      div.innerHTML = html;
+      list.appendChild(div);
+    }
+  },
+
+  renderSettings() {
+    const s = EarthHQ.State.s;
+    const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
+    const editor = document.getElementById('task-editor');
+    editor.innerHTML = '';
+    tasks.forEach((t, i) => {
+      const c = EarthHQ.Data.crystals[t.crystal];
+      editor.innerHTML += `
+        <div class="tle-item">
+          <span class="tle-icon">${t.icon}</span>
+          <span class="tle-name">${t.name} → <span style="color:${c.color}">${c.icon} ${c.name}</span></span>
+          <button class="tle-del" onclick="EarthHQ.App.removeTask(${i})">Remove</button>
+        </div>
+      `;
+    });
+  },
+
+  showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    setTimeout(() => t.classList.remove('on'), 3000);
+  },
+
+  closeMod(id) { document.getElementById(id).classList.remove('on'); },
+
+  initStars() {
+    const c = document.getElementById('starfield');
+    const x = c.getContext('2d');
+    let stars = [], meteors = [];
+    const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
+    const make = () => { stars = []; for (let i = 0; i < 200; i++) stars.push({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.2 + 0.3, s: Math.random() * 0.12 + 0.02, b: Math.random(), ts: Math.random() * 0.02 + 0.003 }); };
+    const meteor = () => { if (Math.random() < 0.003 && meteors.length < 2) meteors.push({ x: Math.random() * c.width * 0.5, y: Math.random() * c.height * 0.3, len: Math.random() * 60 + 30, sp: Math.random() * 6 + 3, ang: Math.PI / 4 }); };
+    const draw = () => {
+      x.fillStyle = '#070b14'; x.fillRect(0, 0, c.width, c.height);
+      stars.forEach(s => { s.y += s.s; if (s.y > c.height) { s.y = 0; s.x = Math.random() * c.width; } s.b += (Math.random() - 0.5) * s.ts; s.b = Math.max(0.2, Math.min(0.8, s.b)); x.beginPath(); x.arc(s.x, s.y, s.r, 0, Math.PI * 2); x.fillStyle = `rgba(180,200,230,${s.b})`; x.fill(); });
+      meteors.forEach((m, i) => { m.x += Math.cos(m.ang) * m.sp; m.y += Math.sin(m.ang) * m.sp; const g = x.createLinearGradient(m.x, m.y, m.x - Math.cos(m.ang) * m.len, m.y - Math.sin(m.ang) * m.len); g.addColorStop(0, 'rgba(255,255,255,0.7)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.beginPath(); x.moveTo(m.x, m.y); x.lineTo(m.x - Math.cos(m.ang) * m.len, m.y - Math.sin(m.ang) * m.len); x.strokeStyle = g; x.lineWidth = 1.5; x.stroke(); if (m.x > c.width + 50 || m.y > c.height + 50) meteors.splice(i, 1); });
+      meteor();
+      requestAnimationFrame(draw);
+    };
+    resize(); make(); draw();
+    window.addEventListener('resize', () => { resize(); make(); });
+  }
+};
+
+// ===== TASK =====
+EarthHQ.Task = {
+  complete(id) {
+    const s = EarthHQ.State.s;
+    if (s.todayDone[id]) return;
+    const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
+    const t = tasks.find(x => x.id === id);
+    if (!t) return;
+
+    s.todayDone[id] = true;
+    EarthHQ.State.addCrystal(t.crystal, 1);
+    const msg = EarthHQ.Data.doneMsgs[id] || `${t.crystal} Crystal added.`;
+    EarthHQ.State.addLog('grow', msg);
+    EarthHQ.State.save();
+
+    EarthHQ.Sound.done();
+    EarthHQ.UI.showToast(msg);
+    EarthHQ.UI.render();
+  }
+};
+
+// ===== CATCH UP =====
+EarthHQ.CatchUp = {
+  pendingDate: null,
+
+  open(dateStr) {
+    this.pendingDate = dateStr;
+    const d = new Date(dateStr);
+    const dn = dateStr === EarthHQ.State._ds(new Date(Date.now() - 86400000)) ? 'Yesterday' : d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    document.getElementById('cu-title').textContent = `Catch Up: ${dn}`;
+    document.getElementById('cu-desc').textContent = 'Add your contributions for this day?';
+
+    const preview = document.getElementById('cu-preview');
+    preview.innerHTML = '<h4>Crystals you will add:</h4>';
+    const tasks = EarthHQ.State.s.tasks.length > 0 ? EarthHQ.State.s.tasks : EarthHQ.Data.defaultTasks;
+    tasks.forEach(t => {
+      const c = EarthHQ.Data.crystals[t.crystal];
+      preview.innerHTML += `<div class="ci"><span class="cii">${c.icon}</span><span>${c.name} Crystal — ${t.name}</span></div>`;
+    });
+
+    EarthHQ.UI.showToast('');
+    document.getElementById('cu-mod').classList.add('on');
+  },
+
+  confirm() {
+    const ds = this.pendingDate;
+    if (!ds) return;
+    const s = EarthHQ.State.s;
+    const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
+    const dayRecord = {};
+    tasks.forEach(t => {
+      dayRecord[t.id] = true;
+      EarthHQ.State.addCrystal(t.crystal, 1);
+    });
+    s.history[ds] = dayRecord;
+    EarthHQ.State.addLog('catch', `Caught up ${ds}. All ${tasks.length} contributions added.`);
+    EarthHQ.State.save();
+
+    EarthHQ.Sound.catchup();
+    EarthHQ.UI.closeMod('cu-mod');
+    EarthHQ.UI.showToast('You are updating past contributions. Good job keeping the Earth safe!');
+    setTimeout(() => { EarthHQ.UI.renderHistory(); EarthHQ.UI.render(); }, 300);
+  }
+};
+
+// ===== APP =====
+EarthHQ.App = {
+  start() { EarthHQ.State.init(); EarthHQ.UI.init(); },
+
+  finishDay() {
+    const s = EarthHQ.State.s;
+    const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
+    const doneCount = Object.values(s.todayDone).filter(Boolean).length;
+    const total = tasks.length;
+    const allDone = doneCount === total;
+
+    if (Object.keys(s.todayDone).length > 0) {
+      s.history[EarthHQ.State.today()] = { ...s.todayDone };
+    }
+    if (!s.finishedToday) {
+      s.finishedToday = true;
+      if (s.mechaLevel < 7) s.mechaLevel++;
+      s.streak++;
+    }
+    EarthHQ.State.save();
+    EarthHQ.Sound.allDone();
+
+    const icon = document.getElementById('exit-icon');
+    const title = document.getElementById('exit-title');
+    const sub = document.getElementById('exit-sub');
+    const msg = document.getElementById('exit-msg');
+    const list = document.getElementById('exit-list');
+
+    if (allDone) {
+      icon.textContent = '🌍';
+      title.textContent = 'Earth Civilization Protected Today';
+      sub.innerHTML = 'All systems are online.<br>Thank you, Commander.';
+      msg.innerHTML = 'Go enjoy your real-world adventure.';
+    } else if (doneCount > 0) {
+      icon.textContent = '🌍';
+      title.textContent = 'Earth Is Safer Today';
+      sub.innerHTML = 'Thank you for your contribution.<br>Every mission matters.<br>We will continue tomorrow.';
+      msg.innerHTML = 'Go play, read, draw, or rest.<br>See you tomorrow.';
+    } else {
+      icon.textContent = '🌍';
+      title.textContent = 'See You Tomorrow';
+      sub.innerHTML = 'Rest well, Guardian.<br>Tomorrow is a new day.';
+      msg.innerHTML = 'Go rest and recharge.<br>We will protect Earth again tomorrow.';
+    }
+
+    list.innerHTML = '';
+    tasks.forEach(t => {
+      if (s.todayDone[t.id]) {
+        const c = EarthHQ.Data.crystals[t.crystal];
+        const li = document.createElement('li');
+        li.innerHTML = `${t.name} <span style="color:${c.color}">${c.icon} ${c.name}</span>`;
+        list.appendChild(li);
+      }
+    });
+
+    document.getElementById('exit').classList.add('on');
+  },
+
+  sayGoodbye() {
+    EarthHQ.State.s.goodbye = true;
+    EarthHQ.State.save();
+    document.getElementById('exit').classList.remove('on');
+    setTimeout(() => EarthHQ.UI.go('rest'), 300);
+  },
+
+  addTask() {
+    const name = document.getElementById('new-task-name').value.trim();
+    const crystal = document.getElementById('new-task-crystal').value;
+    if (!name) return;
+    const s = EarthHQ.State.s;
+    const id = 'task_' + Date.now();
+    const icons = ['📖', '✏️', '🎨', '🏃', '🧩', '🎯', '📐', '🔬', '🎭', '🌟'];
+    const icon = icons[Math.floor(Math.random() * icons.length)];
+    s.tasks.push({ id, name, mecha: name.toUpperCase(), crystal, icon });
+    EarthHQ.State.save();
+    document.getElementById('new-task-name').value = '';
+    EarthHQ.UI.renderSettings();
+    EarthHQ.UI.showToast('Mission added!');
+  },
+
+  removeTask(index) {
+    const s = EarthHQ.State.s;
+    if (s.tasks.length <= 1) {
+      EarthHQ.UI.showToast('Keep at least one mission.');
+      return;
+    }
+    s.tasks.splice(index, 1);
+    EarthHQ.State.save();
+    EarthHQ.UI.renderSettings();
+    EarthHQ.UI.render();
+  },
+
+  exportData() {
+    const data = JSON.stringify(EarthHQ.State.s, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `earth-hq-backup-${EarthHQ.State.today()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    EarthHQ.UI.showToast('Backup downloaded!');
+  },
+
+  importData(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (data.crystals && data.history) {
+          EarthHQ.State.s = { ...EarthHQ.State.s, ...data };
+          EarthHQ.State.save();
+          EarthHQ.UI.showToast('Data restored!');
+          EarthHQ.UI.render();
+          EarthHQ.UI.renderSettings();
+        } else {
+          EarthHQ.UI.showToast('Invalid backup file.');
+        }
+      } catch (err) {
+        EarthHQ.UI.showToast('Could not read file.');
+      }
+    };
+    reader.readAsText(file);
+    input.value = '';
+  },
+
+  reset() { if (confirm('Reset all data? This cannot be undone.')) EarthHQ.State.reset(); }
+};
+
+window.addEventListener('DOMContentLoaded', () => EarthHQ.App.start());
 </script>
 </body>
 </html>
