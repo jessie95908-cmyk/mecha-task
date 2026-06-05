@@ -7,23 +7,26 @@
 <style>
 /* ===== VARIABLES ===== */
 :root {
-  --bg-deep: #070b14;
-  --bg-panel: rgba(12, 20, 45, 0.9);
-  --ck: #4ecdc4; --cw: #e17055; --ci: #a29bfe;
-  --cl: #ff9f43; --cc: #74b9ff; --cd: #55efc4;
-  --tb: #e8f0f0; --tn: #9aacb8; --td: #4a5a6a;
+  --bg-deep: #1a5276;
+  --bg-mid: #2874a6;
+  --bg-low: #5dade2;
+  --bg-panel: rgba(255, 255, 255, 0.18);
+  --ck: #38bdf8; --cw: #fbbf24; --ci: #c084fc;
+  --cl: #4ade80; --cc: #2dd4bf; --cd: #4ade80;
+  --tb: #ffffff; --tn: #d6eaf8; --td: #aed6f1;
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { font-family: var(--font); background: var(--bg-deep); color: var(--tb); height: 100vh; overflow: hidden; font-size: 15px; }
+.sunrise { position: fixed; bottom: -150px; left: 50%; transform: translateX(-50%); width: 600px; height: 350px; background: radial-gradient(ellipse, rgba(255, 220, 120, 0.35), rgba(135, 206, 250, 0.25), rgba(221, 160, 221, 0.15), transparent 70%); pointer-events: none; z-index: 1; }
+html, body { font-family: var(--font); background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 50%, var(--bg-low) 100%); color: var(--tb); height: 100vh; overflow: hidden; font-size: 15px; }
 
 /* ===== BACKGROUND ===== */
 #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 .nebula { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 1; }
-.n1 { width: 500px; height: 500px; top: -150px; left: -150px; background: radial-gradient(circle, rgba(78,205,196,0.1), transparent 70%); animation: nf 25s ease-in-out infinite; }
-.n2 { width: 400px; height: 400px; bottom: 50px; right: -100px; background: radial-gradient(circle, rgba(162,155,254,0.08), transparent 70%); animation: nf 30s ease-in-out infinite reverse; }
-.n3 { width: 350px; height: 350px; top: 30%; left: 50%; background: radial-gradient(circle, rgba(116,185,255,0.06), transparent 70%); animation: nf 35s ease-in-out infinite; }
-.earth-far { position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%); width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2a9d8f, #0a3d3d 40%, transparent 70%); box-shadow: 0 0 50px rgba(42,157,143,0.15); opacity: 0.35; pointer-events: none; z-index: 1; }
+.n1 { width: 600px; height: 600px; top: -200px; left: -200px; background: radial-gradient(circle, rgba(135, 206, 250, 0.28), transparent 70%); animation: nf 25s ease-in-out infinite; }
+.n2 { width: 500px; height: 500px; bottom: 0px; right: -150px; background: radial-gradient(circle, rgba(255, 200, 100, 0.22), transparent 70%); animation: nf 30s ease-in-out infinite reverse; }
+.n3 { width: 450px; height: 450px; top: 25%; left: 45%; background: radial-gradient(circle, rgba(221, 160, 221, 0.18), transparent 70%); animation: nf 35s ease-in-out infinite; }
+.earth-far { position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%); width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #3498db, #1a5276 40%, transparent 70%); box-shadow: 0 0 60px rgba(52,152,219,0.3); opacity: 0.4; pointer-events: none; z-index: 1; }
 @keyframes nf { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-20px)} }
 
 /* ===== ANIMATIONS ===== */
@@ -33,6 +36,7 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 @keyframes cp { 0%{transform:scale(0.6);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
 @keyframes glow { 0%,100%{opacity:0.6} 50%{opacity:1} }
 @keyframes splash { 0%{width:0} 100%{width:100%} }
+@keyframes seedFloat { 0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 20px rgba(74,222,128,0.25)); } 50% { transform: translateY(-10px); filter: drop-shadow(0 0 45px rgba(74,222,128,0.55)); } }
 
 /* ===== PAGE SYSTEM ===== */
 .page { position: fixed; inset: 0; z-index: 10; display: none; flex-direction: column; }
@@ -40,7 +44,7 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px; }
 
 /* ===== SPLASH ===== */
-#splash { justify-content: center; align-items: center; background: radial-gradient(ellipse at center, #0f1a2e 0%, var(--bg-deep) 70%); z-index: 100; }
+#splash { justify-content: center; align-items: center; background: radial-gradient(ellipse at center, #1a5276 0%, var(--bg-deep) 70%); z-index: 100; }
 .sb { text-align: center; animation: sf 4s ease-in-out infinite; }
 .sb .sl { font-size: 64px; margin-bottom: 12px; }
 .sb h1 { font-size: 28px; font-weight: 900; letter-spacing: 4px; background: linear-gradient(90deg, var(--ck), var(--cc)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -54,9 +58,9 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 .ob-box .ob-icon { font-size: 56px; margin-bottom: 16px; }
 .ob-box h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
 .ob-box p { color: var(--tn); font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
-.ob-tasks { text-align: left; background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.1); border-radius: 14px; padding: 14px; margin-bottom: 20px; }
+.ob-tasks { text-align: left; background: var(--bg-panel); border: 1px solid rgba(192, 132, 252, 0.1); border-radius: 14px; padding: 14px; margin-bottom: 20px; }
 .ob-tasks h3 { font-size: 13px; color: var(--ck); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-.ob-task { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; }
+.ob-task { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; }
 .ob-task:last-child { border-bottom: none; }
 .ob-task input { width: 18px; height: 18px; accent-color: var(--ck); }
 .ob-task label { flex: 1; font-size: 14px; cursor: pointer; }
@@ -65,14 +69,14 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 .btn:active { transform: scale(0.97); }
 
 /* ===== DASHBOARD ===== */
-.top { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid rgba(78,205,196,0.06); flex-shrink: 0; }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid rgba(192, 132, 252, 0.1); flex-shrink: 0; }
 .top .brand { font-size: 12px; font-weight: 800; letter-spacing: 2px; color: var(--ck); }
 .badges { display: flex; gap: 8px; }
-.badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: rgba(78,205,196,0.06); border: 1px solid rgba(78,205,196,0.12); color: var(--ck); }
-.badge.fire { color: var(--cw); border-color: rgba(225,112,85,0.2); background: rgba(225,112,85,0.05); }
+.badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: rgba(192,132,252,0.08); border: 1px solid rgba(192,132,252,0.18); color: var(--ck); }
+.badge.fire { color: var(--cw); border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.08); }
 
-.panel { background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.08); border-radius: 16px; padding: 16px; margin-bottom: 12px; position: relative; overflow: hidden; animation: fi 0.4s ease; }
-.panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ck), transparent); opacity: 0.4; }
+.panel { background: var(--bg-panel); border: 1px solid rgba(192,132,252,0.1); border-radius: 16px; padding: 16px; margin-bottom: 12px; position: relative; overflow: hidden; animation: fi 0.4s ease; max-width: 720px; margin-left: auto; margin-right: auto; }
+.panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cw), transparent); opacity: 0.4; }
 .pt { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--ck); margin-bottom: 12px; text-transform: uppercase; }
 
 /* Quote */
@@ -80,30 +84,30 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 
 /* Mecha big */
 .mecha-big { text-align: center; padding: 8px 0 12px; }
-.mecha-big .emoji { font-size: 88px; line-height: 1; filter: drop-shadow(0 0 30px rgba(78,205,196,0.2)); animation: sf 5s ease-in-out infinite; }
+.mecha-big .emoji { font-size: 88px; line-height: 1; filter: drop-shadow(0 0 30px rgba(74,222,128,0.35)); animation: seedFloat 4s ease-in-out infinite; }
 .mecha-big .name { font-size: 20px; font-weight: 800; margin-top: 4px; }
 .mecha-big .lvl { font-size: 13px; color: var(--td); margin-top: 2px; }
 
 /* Today's crystals */
 .tcs { display: flex; flex-wrap: wrap; gap: 8px; }
-.tc { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 14px; display: flex; align-items: center; gap: 6px; font-size: 13px; animation: cp 0.4s ease; }
+.tc { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 14px; display: flex; align-items: center; gap: 6px; font-size: 13px; animation: cp 0.4s ease; }
 .tc .tci { font-size: 18px; }
 .tc .tcn { font-weight: 600; }
 .tc .tcc { font-weight: 800; }
 
 /* Task cards */
-.tasks { display: flex; flex-direction: column; gap: 10px; }
-.task { background: rgba(8,16,40,0.5); border: 1px solid rgba(78,205,196,0.06); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.2s ease; }
-.task:hover { border-color: rgba(78,205,196,0.15); transform: translateX(3px); }
+.tasks { display: flex; flex-direction: column; gap: 8px; max-width: 600px; margin: 0 auto; }
+.task { background: rgba(8,16,40,0.35); border: 1px solid rgba(192,132,252,0.08); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s ease; }
+.task:hover { border-color: rgba(192,132,252,0.2); transform: translateX(3px); }
 .task:active { transform: scale(0.98); }
-.task.done { border-color: rgba(85,239,196,0.15); background: rgba(85,239,196,0.03); }
-.task .t-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(78,205,196,0.06); border: 1px solid rgba(78,205,196,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-.task.done .t-icon { background: rgba(85,239,196,0.08); border-color: rgba(85,239,196,0.15); }
-.task .t-info { flex: 1; min-width: 0; }
+.task.done { border-color: rgba(74,222,128,0.2); background: rgba(74,222,128,0.05); }
+.task .t-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(192,132,252,0.08); border: 1px solid rgba(192, 132, 252, 0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.task.done .t-icon { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.2); }
+.task .t-info { flex: 0 1 auto; min-width: 0; }
 .task .t-mecha { font-size: 14px; font-weight: 700; }
 .task .t-normal { font-size: 12px; color: var(--td); margin-top: 1px; }
 .task .t-crystal { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 8px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px; }
-.task .t-check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--td); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: transparent; transition: all 0.3s; }
+.task .t-check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--td); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: transparent; transition: all 0.3s; margin-left: auto; }
 .task.done .t-check { border-color: var(--cd); background: var(--cd); color: #070b14; }
 
 /* Earth status */
@@ -115,13 +119,13 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 .es.safe .est { color: var(--ck); }
 
 /* Finish button */
-.fin-btn { background: linear-gradient(135deg, rgba(78,205,196,0.12), rgba(116,185,255,0.08)); border: 1px solid rgba(78,205,196,0.18); color: var(--tb); padding: 14px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; margin-top: 8px; }
-.fin-btn:hover { transform: scale(1.02); border-color: rgba(78,205,196,0.3); }
+.fin-btn { background: linear-gradient(135deg, rgba(192,132,252,0.18), rgba(127,231,255,0.08)); border: 1px solid rgba(192,132,252,0.2); color: var(--tb); padding: 14px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; margin-top: 8px; }
+.fin-btn:hover { transform: scale(1.02); border-color: rgba(192,132,252,0.35); }
 .fin-btn:active { transform: scale(0.98); }
 
 /* Collection */
 .coll { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.ci { background: rgba(8,16,40,0.5); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 14px 6px; text-align: center; }
+.ci { background: rgba(8,16,40,0.35); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px 6px; text-align: center; }
 .ci .cii { font-size: 26px; margin-bottom: 4px; }
 .ci .cin { font-size: 10px; color: var(--td); text-transform: uppercase; letter-spacing: 0.5px; }
 .ci .cic { font-size: 22px; font-weight: 800; margin-top: 4px; }
@@ -131,40 +135,40 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 .mn { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
 .mn .md { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.4s ease; }
 .mn.lock .md { background: rgba(30,40,60,0.6); border: 1px solid rgba(100,110,130,0.2); filter: grayscale(0.6); }
-.mn.open .md { background: rgba(78,205,196,0.08); border: 1px solid rgba(78,205,196,0.2); }
+.mn.open .md { background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); }
 .mn.here .md { background: rgba(247,183,49,0.1); border: 1px solid var(--cw); animation: glow 3s ease-in-out infinite; }
 .mn .mnm { font-size: 9px; color: var(--td); text-align: center; white-space: nowrap; }
 .mn.here .mnm { color: var(--cw); font-weight: 600; }
-.ml { flex: 1; height: 2px; background: rgba(78,205,196,0.06); min-width: 8px; margin-top: -16px; }
+.ml { flex: 1; height: 2px; background: rgba(192,132,252,0.08); min-width: 8px; margin-top: -16px; }
 .ml.on { background: linear-gradient(90deg, var(--ck), var(--cw)); }
 
 /* ===== HISTORY ===== */
 #history .scroll { padding-top: 8px; }
-.hday { background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.08); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+.hday { background: var(--bg-panel); border: 1px solid rgba(192,132,252,0.1); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
 .hday .hh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .hday .hd { font-size: 14px; font-weight: 700; }
 .hday .hs { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 10px; }
-.hday .hs.done { color: var(--cd); background: rgba(85,239,196,0.08); }
-.hday .hs.part { color: var(--ck); background: rgba(78,205,196,0.08); }
-.hday .hs.miss { color: var(--td); background: rgba(255,255,255,0.03); }
+.hday .hs.done { color: var(--cd); background: rgba(74,222,128,0.1); }
+.hday .hs.part { color: var(--ck); background: rgba(192,132,252,0.1); }
+.hday .hs.miss { color: var(--td); background: rgba(255,255,255,0.04); }
 .hday .htl { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.hday .ht { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: rgba(255,255,255,0.03); color: var(--td); }
-.hday .ht.done { background: rgba(85,239,196,0.06); color: var(--cd); }
+.hday .ht { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: rgba(255,255,255,0.04); color: var(--td); }
+.hday .ht.done { background: rgba(74,222,128,0.08); color: var(--cd); }
 .hday .hcl { display: flex; flex-wrap: wrap; gap: 8px; }
 .hday .hc { font-size: 11px; display: flex; align-items: center; gap: 3px; }
-.cub { background: linear-gradient(135deg, rgba(162,155,254,0.1), rgba(162,155,254,0.04)); border: 1px solid rgba(162,155,254,0.18); color: var(--tb); padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
-.cub:hover { transform: scale(1.02); border-color: rgba(162,155,254,0.35); }
+.cub { background: linear-gradient(135deg, rgba(167,139,250,0.12), rgba(167,139,250,0.05)); border: 1px solid rgba(167,139,250,0.25); color: var(--tb); padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
+.cub:hover { transform: scale(1.02); border-color: rgba(167,139,250,0.4); }
 .cub:active { transform: scale(0.98); }
 
 /* ===== SETTINGS ===== */
 #settings .scroll { padding-top: 8px; }
-.srow { background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.06); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+.srow { background: var(--bg-panel); border: 1px solid rgba(192,132,252,0.08); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
 .srow h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
 .srow p { font-size: 12px; color: var(--td); }
 .srow .sval { font-size: 12px; font-weight: 700; color: var(--cd); float: right; }
 
 .task-list-edit { margin-top: 10px; }
-.tle-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.tle-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .tle-item:last-child { border-bottom: none; }
 .tle-item .tle-icon { font-size: 18px; }
 .tle-item .tle-name { flex: 1; font-size: 13px; }
@@ -172,53 +176,40 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 .tle-item .tle-del:active { transform: scale(0.95); }
 
 .add-task-form { display: flex; gap: 8px; margin-top: 10px; }
-.add-task-form input { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(78,205,196,0.1); border-radius: 10px; padding: 10px 12px; color: var(--tb); font-size: 13px; font-family: inherit; }
+.add-task-form input { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(192, 132, 252, 0.1); border-radius: 10px; padding: 10px 12px; color: var(--tb); font-size: 13px; font-family: inherit; }
 .add-task-form input::placeholder { color: var(--td); }
-.add-task-form select { background: rgba(255,255,255,0.04); border: 1px solid rgba(78,205,196,0.1); border-radius: 10px; padding: 10px; color: var(--tb); font-size: 13px; }
+.add-task-form select { background: rgba(255,255,255,0.06); border: 1px solid rgba(192, 132, 252, 0.1); border-radius: 10px; padding: 10px; color: var(--tb); font-size: 13px; }
 .add-task-form .add-btn { background: var(--ck); color: #070b14; border: none; padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
 .add-task-form .add-btn:active { transform: scale(0.95); }
 
-.export-btn { background: rgba(78,205,196,0.08); border: 1px solid rgba(78,205,196,0.15); color: var(--ck); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
+.export-btn { background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); color: var(--ck); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
 .export-btn:active { transform: scale(0.98); }
 .import-area { margin-top: 8px; }
 .import-area input[type="file"] { display: none; }
-.import-area label { display: block; background: rgba(255,255,255,0.03); border: 1px dashed rgba(78,205,196,0.15); color: var(--tn); padding: 12px; border-radius: 12px; font-size: 13px; text-align: center; cursor: pointer; }
-.import-area label:active { background: rgba(78,205,196,0.05); }
+.import-area label { display: block; background: rgba(255,255,255,0.04); border: 1px dashed rgba(192,132,252,0.2); color: var(--tn); padding: 12px; border-radius: 12px; font-size: 13px; text-align: center; cursor: pointer; }
+.import-area label:active { background: rgba(192,132,252,0.08); }
 
 .danger-btn { background: rgba(255,100,100,0.06); color: #ff6464; border: 1px solid rgba(255,100,100,0.12); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 16px; }
 .danger-btn:active { transform: scale(0.98); }
 
-/* ===== EXIT ===== */
-#exit { position: fixed; inset: 0; background: rgba(7,11,20,0.95); backdrop-filter: blur(20px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 24px; }
-#exit.on { display: flex; }
-.ec { max-width: 380px; width: 100%; text-align: center; animation: su 0.5s ease; }
-.ec .ei { font-size: 52px; margin-bottom: 14px; }
-.ec h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
-.ec .esub { color: var(--tn); font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
-.ec .elist { background: rgba(255,255,255,0.03); border: 1px solid rgba(78,205,196,0.08); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; text-align: left; max-height: 200px; overflow-y: auto; }
-.ec .elist li { list-style: none; padding: 5px 0; font-size: 13px; color: var(--tn); border-bottom: 1px solid rgba(255,255,255,0.03); }
-.ec .elist li:last-child { border-bottom: none; }
-.ec .elist li::before { content: '✓ '; color: var(--cd); font-weight: 700; }
-.ec .emsg { color: var(--td); font-size: 14px; line-height: 1.7; margin-bottom: 18px; }
-.ebtn { background: linear-gradient(135deg, var(--ck), var(--cc)); color: #fff; border: none; padding: 14px 36px; border-radius: 24px; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
-.ebtn:hover { transform: scale(1.03); }
-.ebtn:active { transform: scale(0.97); }
-
 /* Rest */
-#rest { justify-content: center; align-items: center; background: var(--bg-deep); z-index: 2000; }
+#rest { background: var(--bg-deep); z-index: 2000; }
+#rest .scroll { display: flex; flex-direction: column; align-items: center; padding: 40px 16px 24px; }
 .rb { text-align: center; }
 .rb .ri { font-size: 48px; margin-bottom: 14px; opacity: 0.5; }
 .rb h2 { font-size: 18px; font-weight: 700; color: var(--td); margin-bottom: 6px; }
 .rb p { color: var(--td); font-size: 14px; }
+.rest-actions { display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+.rest-actions .fin-btn { width: auto; padding: 12px 20px; font-size: 13px; margin: 0; }
 
 /* Modal */
-.mod { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(16px); display: none; justify-content: center; align-items: center; z-index: 500; padding: 20px; }
+.mod { position: fixed; inset: 0; background: rgba(26, 16, 60, 0.85); backdrop-filter: blur(16px); display: none; justify-content: center; align-items: center; z-index: 500; padding: 20px; }
 .mod.on { display: flex; }
-.mod-box { background: var(--bg-panel); border: 1px solid rgba(78,205,196,0.12); border-radius: 20px; padding: 28px 22px; max-width: 380px; width: 100%; text-align: center; position: relative; overflow: hidden; animation: su 0.4s ease; }
-.mod-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ck), transparent); }
+.mod-box { background: var(--bg-panel); border: 1px solid rgba(192,132,252,0.18); border-radius: 20px; padding: 28px 22px; max-width: 380px; width: 100%; text-align: center; position: relative; overflow: hidden; animation: su 0.4s ease; }
+.mod-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cw), transparent); }
 .mod-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
 .mod-box p { color: var(--tn); font-size: 14px; margin-bottom: 16px; }
-.cup { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 14px; margin: 14px 0; text-align: left; }
+.cup { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 14px; margin: 14px 0; text-align: left; }
 .cup h4 { font-size: 11px; color: var(--td); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
 .cup .ci { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 13px; }
 .cup .ci .cii { font-size: 16px; }
@@ -228,24 +219,29 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 .can:active { transform: scale(0.97); }
 
 /* Toast */
-.toast { position: fixed; top: 55px; left: 50%; transform: translateX(-50%) translateY(-20px); opacity: 0; background: rgba(14,22,40,0.95); border: 1px solid rgba(78,205,196,0.12); border-radius: 12px; padding: 12px 20px; font-size: 13px; color: var(--tb); z-index: 400; transition: all 0.3s ease; pointer-events: none; max-width: 320px; text-align: center; line-height: 1.5; }
+.toast { position: fixed; top: 55px; left: 50%; transform: translateX(-50%) translateY(-20px); opacity: 0; background: rgba(45, 27, 105, 0.95); border: 1px solid rgba(192,132,252,0.18); border-radius: 12px; padding: 12px 20px; font-size: 13px; color: var(--tb); z-index: 400; transition: all 0.3s ease; pointer-events: none; max-width: 320px; text-align: center; line-height: 1.5; }
 .toast.on { transform: translateX(-50%) translateY(0); opacity: 1; }
 
 /* Bottom nav */
-.nav { display: flex; justify-content: space-around; padding: 6px 0 calc(6px + env(safe-area-inset-bottom)); background: rgba(7,11,20,0.95); border-top: 1px solid rgba(78,205,196,0.05); flex-shrink: 0; }
+.nav { display: flex; justify-content: space-around; padding: 6px 0 calc(6px + env(safe-area-inset-bottom)); background: rgba(15, 52, 96, 0.95); border-top: 1px solid rgba(135,206,250,0.12); flex-shrink: 0; }
 .nb { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px; background: none; border: none; color: var(--td); font-family: inherit; font-size: 10px; font-weight: 600; cursor: pointer; transition: color 0.2s; }
 .nb .ni { font-size: 20px; transition: transform 0.2s; }
 .nb:active .ni { transform: scale(0.9); }
 .nb.on { color: var(--ck); }
 
-/* Log */
-.log-entry { background: var(--bg-panel); border-left: 3px solid var(--ck); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
-.log-entry.grow { border-left-color: var(--cd); }
-.log-entry.catch { border-left-color: var(--ci); }
-.log-entry .lt { font-size: 10px; color: var(--td); margin-bottom: 2px; }
+/* Civilization Tree */
+.tree { text-align: center; padding: 16px 8px; }
+.tree .t-emoji { font-size: 80px; line-height: 1; animation: treeBreath 5s ease-in-out infinite; }
+.tree .t-name { font-size: 18px; font-weight: 800; color: var(--cd); margin-top: 10px; }
+.tree .t-desc { font-size: 13px; color: var(--tn); margin-top: 4px; }
+.tree .t-seeds { display: flex; justify-content: center; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+.tree .t-seed { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--tn); }
+.tree .t-seed span { font-size: 16px; }
+@keyframes treeBreath { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(74,222,128,0.2)); } 50% { transform: scale(1.03); filter: drop-shadow(0 0 30px rgba(74,222,128,0.35)); } }
 
+/* Log */
 ::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-thumb { background: rgba(78,205,196,0.08); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: rgba(192,132,252,0.12); border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -255,6 +251,7 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 <div class="nebula n2"></div>
 <div class="nebula n3"></div>
 <div class="earth-far"></div>
+<div class="sunrise"></div>
 
 <div class="toast" id="toast"></div>
 
@@ -292,13 +289,18 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 <!-- DASHBOARD -->
 <div class="page" id="dashboard">
   <div class="top">
-    <div class="brand">🌍 EARTH HQ</div>
+    <div class="brand" onclick="EarthHQ.UI.go('dashboard')" style="cursor:pointer;">🌍 EARTH HQ</div>
     <div class="badges">
-      <div class="badge fire" id="bd-streak">🔥 0</div>
-      <div class="badge" id="bd-level">🌱 Lv.1</div>
+      <div class="badge" onclick="EarthHQ.UI.renderReview();EarthHQ.UI.go('review')" style="cursor:pointer;">📖 Report</div>
     </div>
   </div>
   <div class="scroll" id="dash-scroll">
+    <!-- Date & Mission Day -->
+    <div style="text-align:center;padding:6px 0 2px;">
+      <div id="dash-date" style="font-size:13px;color:var(--td);letter-spacing:0.3px;"></div>
+      <div id="dash-mission-day" style="font-size:12px;color:var(--ck);margin-top:3px;font-weight:700;"></div>
+    </div>
+
     <!-- Daily Quote -->
     <div class="panel">
       <div class="quote" id="daily-quote">"Every day is a new chance to grow."</div>
@@ -344,6 +346,12 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
       <div class="coll" id="collection"></div>
     </div>
 
+    <!-- Civilization Tree -->
+    <div class="panel">
+      <div class="pt">🌳 Civilization Tree</div>
+      <div class="tree" id="civ-tree"></div>
+    </div>
+
     <!-- Journey -->
     <div class="panel">
       <div class="pt">🗺️ Journey</div>
@@ -360,7 +368,7 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 <!-- HISTORY -->
 <div class="page" id="history">
   <div class="top">
-    <div class="brand">🌍 EARTH HQ</div>
+    <div class="brand" onclick="EarthHQ.UI.go('dashboard')" style="cursor:pointer;">🌍 EARTH HQ</div>
     <div class="badges"><div class="badge">📅 History</div></div>
   </div>
   <div class="scroll">
@@ -377,7 +385,7 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 <!-- SETTINGS -->
 <div class="page" id="settings">
   <div class="top">
-    <div class="brand">🌍 EARTH HQ</div>
+    <div class="brand" onclick="EarthHQ.UI.go('dashboard')" style="cursor:pointer;">🌍 EARTH HQ</div>
     <div class="badges"><div class="badge">⚙️ Setup</div></div>
   </div>
   <div class="scroll">
@@ -423,15 +431,32 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
   </div>
 </div>
 
-<!-- EXIT -->
-<div id="exit">
-  <div class="ec">
-    <div class="ei" id="exit-icon">🌍</div>
-    <h2 id="exit-title">All done for today.</h2>
-    <p class="esub" id="exit-sub">You powered up. Good work.</p>
-    <ul class="elist" id="exit-list"></ul>
-    <p class="emsg" id="exit-msg">Now go play, read, draw, or rest.<br>See you tomorrow.</p>
-    <button class="ebtn" onclick="EarthHQ.App.sayGoodbye()">See you tomorrow 👋</button>
+<!-- REVIEW -->
+<div class="page" id="review">
+  <div class="top">
+    <div class="brand" onclick="EarthHQ.UI.go('dashboard')" style="cursor:pointer;">🌍 EARTH HQ</div>
+    <div class="badges"><div class="badge">📊 Report</div></div>
+  </div>
+  <div class="scroll">
+    <div style="text-align:center;margin:24px 0 20px;">
+      <div style="font-size:52px;margin-bottom:12px;">🌍</div>
+      <h2 style="font-size:24px;font-weight:800;letter-spacing:1px;">Today's Contribution</h2>
+      <p style="color:var(--td);font-size:13px;margin-top:6px;" id="rv-date">Today</p>
+      <p style="color:var(--ck);font-size:12px;margin-top:4px;font-weight:700;" id="rv-mission-day"></p>
+    </div>
+
+    <div class="panel" id="rv-crystals-panel">
+      <div class="pt" style="color:var(--cd);">✨ Crystals Earned</div>
+      <div id="rv-crystals" style="margin-top:14px;"></div>
+    </div>
+
+    <div style="text-align:center;padding:20px 12px 12px;">
+      <p style="color:var(--tn);font-size:15px;line-height:1.7;margin-bottom:8px;">🌍 Earth became safer today.</p>
+      <p style="color:var(--tn);font-size:15px;line-height:1.7;margin-bottom:8px;">🏠 The people who love you are proud of your effort.</p>
+      <p style="color:var(--ck);font-size:15px;font-weight:700;">Thank you, Commander.</p>
+    </div>
+
+    <button class="fin-btn" onclick="EarthHQ.App.goRest()" style="margin:16px 0 28px;">Rest now 🌙</button>
   </div>
 </div>
 
@@ -451,17 +476,23 @@ html, body { font-family: var(--font); background: var(--bg-deep); color: var(--
 
 <!-- REST -->
 <div class="page" id="rest">
-  <div class="rb">
-    <div class="ri">🌙</div>
-    <h2>Rest mode</h2>
-    <p>Tomorrow is a new day.<br>Be awesome.</p>
+  <div class="scroll">
+    <div class="rb">
+      <div class="ri">🌙</div>
+      <h2>Rest mode</h2>
+      <p>Tomorrow is a new day.<br>Be awesome.</p>
+    </div>
+    <div class="rest-actions">
+      <button class="fin-btn" onclick="EarthHQ.App.showRestReport()">🏠 Today's Report</button>
+      <button class="fin-btn" onclick="EarthHQ.App.showRestTree()">🌳 Civilization Tree</button>
+    </div>
+    <div id="rest-view" style="width:100%;max-width:420px;display:none;"></div>
   </div>
 </div>
 
 <script>
 // ============================================================
-//  EARTH HQ  v1.6
-//  Three-perspective design: Product Manager + Child + Mom
+//  EARTH HQ  v1.8
 // ============================================================
 
 const EarthHQ = {};
@@ -494,12 +525,12 @@ EarthHQ.Data = {
   ],
 
   crystals: {
-    Knowledge:  { name: 'Knowledge',  icon: '📚', color: '#4ecdc4' },
-    Wisdom:     { name: 'Wisdom',     icon: '🏛', color: '#e17055' },
-    Insight:    { name: 'Insight',    icon: '🔭', color: '#a29bfe' },
-    Logic:      { name: 'Logic',      icon: '🧠', color: '#ff9f43' },
-    Creativity: { name: 'Creativity', icon: '🎵', color: '#74b9ff' },
-    Discipline: { name: 'Discipline', icon: '💪', color: '#55efc4' }
+    Knowledge:  { name: 'Knowledge',  icon: '📚', color: '#38bdf8' },
+    Wisdom:     { name: 'Wisdom',     icon: '🏛', color: '#fbbf24' },
+    Insight:    { name: 'Insight',    icon: '🔭', color: '#c084fc' },
+    Logic:      { name: 'Logic',      icon: '🧠', color: '#4ade80' },
+    Creativity: { name: 'Creativity', icon: '🎵', color: '#2dd4bf' },
+    Discipline: { name: 'Discipline', icon: '💪', color: '#f472b6' }
   },
 
   levels: [
@@ -546,11 +577,16 @@ EarthHQ.State = {
     streak: 0,
     lastDate: null,
     finishedToday: false,
-    log: [],
-    goodbye: false
+    goodbye: false,
+    firstMissionDate: null
   },
 
   init() {
+    if (location.search.includes('reset=1')) {
+      localStorage.removeItem('EHQ_v16');
+      location.href = location.pathname;
+      return;
+    }
     const saved = localStorage.getItem('EHQ_v16');
     if (saved) {
       try {
@@ -559,6 +595,15 @@ EarthHQ.State = {
       } catch (e) {
         console.log('Resetting corrupted data');
       }
+    }
+    if (!this.s.tasks || this.s.tasks.length === 0) {
+      this.s.tasks = [...EarthHQ.Data.defaultTasks];
+    }
+    if (!this.s.firstMissionDate) {
+      this.s.firstMissionDate = this.today();
+    }
+    if (this.s.goodbye && !this.s.finishedToday && Object.keys(this.s.todayDone).length === 0) {
+      this.s.goodbye = false;
     }
     this.checkDay();
   },
@@ -583,6 +628,13 @@ EarthHQ.State = {
 
   _ds(d) { return d.toISOString().split('T')[0]; },
   today() { return this._ds(new Date()); },
+  missionDay() {
+    const first = this.s.firstMissionDate;
+    if (!first) return 1;
+    const start = new Date(first + 'T00:00:00');
+    const now = new Date(this.today() + 'T00:00:00');
+    return Math.floor((now - start) / 86400000) + 1;
+  },
 
   save() { localStorage.setItem('EHQ_v16', JSON.stringify(this.s)); },
 
@@ -591,13 +643,9 @@ EarthHQ.State = {
     this.s.todayCrystals[type] = (this.s.todayCrystals[type] || 0) + count;
   },
 
-  addLog(type, text) {
-    this.s.log.push({
-      time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      type, text
-    });
-    if (this.s.log.length > 100) this.s.log.shift();
-    this.save();
+  removeCrystal(type, count) {
+    this.s.crystals[type] = Math.max(0, (this.s.crystals[type] || 0) - count);
+    this.s.todayCrystals[type] = Math.max(0, (this.s.todayCrystals[type] || 0) - count);
   },
 
   getDayStatus(dateStr) {
@@ -676,7 +724,9 @@ EarthHQ.Onboard = {
     });
     if (tasks.length === 0) tasks.push(...EarthHQ.Data.defaultTasks);
     s.tasks = tasks;
+    if (!s.tasks || s.tasks.length === 0) s.tasks = [...EarthHQ.Data.defaultTasks];
     s.initialized = true;
+    if (!s.firstMissionDate) s.firstMissionDate = EarthHQ.State.today();
     s.lastDate = EarthHQ.State.today();
     EarthHQ.State.save();
     EarthHQ.UI.go('dashboard');
@@ -698,6 +748,11 @@ EarthHQ.UI = {
     // Route
     setTimeout(() => {
       const s = EarthHQ.State.s;
+      if (location.search.includes('newday=1')) {
+        s.goodbye = false;
+        s.finishedToday = false;
+        EarthHQ.State.save();
+      }
       if (s.goodbye) this.go('rest');
       else if (!s.initialized) EarthHQ.Onboard.show();
       else { this.go('dashboard'); this.render(); }
@@ -715,14 +770,22 @@ EarthHQ.UI = {
 
   render() {
     const s = EarthHQ.State.s;
-    const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
+    const tasks = (s.tasks && s.tasks.length > 0) ? s.tasks : EarthHQ.Data.defaultTasks;
     const lv = EarthHQ.Data.levels[Math.min(s.mechaLevel - 1, 6)] || EarthHQ.Data.levels[0];
+
+    // Date & Mission Day
+    const dateEl = document.getElementById('dash-date');
+    const missionEl = document.getElementById('dash-mission-day');
+    if (dateEl) dateEl.textContent = '📅 ' + new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    if (missionEl) missionEl.textContent = '🌱 Mission Day ' + EarthHQ.State.missionDay();
     const doneCount = Object.values(s.todayDone).filter(Boolean).length;
     const total = tasks.length;
 
     // HUD
-    document.getElementById('bd-streak').textContent = `🔥 ${s.streak}`;
-    document.getElementById('bd-level').textContent = `${lv.emoji} Lv.${s.mechaLevel}`;
+    const elStreak = document.getElementById('bd-streak');
+    const elLevel = document.getElementById('bd-level');
+    if (elStreak) elStreak.textContent = `🔥 ${s.streak}`;
+    if (elLevel) elLevel.textContent = `${lv.emoji} Lv.${s.mechaLevel}`;
 
     // Quote
     const quotes = EarthHQ.Data.quotes;
@@ -766,13 +829,11 @@ EarthHQ.UI = {
         <div class="t-crystal" style="background:${c.color}10;color:${c.color};border:1px solid ${c.color}20;">${c.icon} ${c.name}</div>
         <div class="t-check">${done ? '✓' : ''}</div>
       `;
-      if (!done) {
-        item.addEventListener('click', () => {
-          EarthHQ.Sound.click();
-          item.style.transform = 'scale(0.97)';
-          setTimeout(() => EarthHQ.Task.complete(t.id), 120);
-        });
-      }
+      item.addEventListener('click', () => {
+        EarthHQ.Sound.click();
+        item.style.transform = 'scale(0.97)';
+        setTimeout(() => EarthHQ.Task.toggle(t.id), 120);
+      });
       list.appendChild(item);
     });
 
@@ -813,6 +874,45 @@ EarthHQ.UI = {
         track.appendChild(line);
       }
     });
+
+    this.renderCivTree();
+  },
+
+  renderCivTree() {
+    const s = EarthHQ.State.s;
+    const total = Object.values(s.crystals).reduce((a, b) => a + b, 0);
+
+    const stages = [
+      { name: 'Seed', emoji: '🌱', desc: 'A tiny seed of hope' },
+      { name: 'Sprout', emoji: '🌿', desc: 'First leaves reach for light' },
+      { name: 'Young Tree', emoji: '🌲', desc: 'Growing stronger each day' },
+      { name: 'Strong Tree', emoji: '🌳', desc: 'Deep roots, steady growth' },
+      { name: 'Wisdom Tree', emoji: '🍃', desc: 'Wisdom flows through every branch' },
+      { name: 'Earth Guardian Tree', emoji: '🌎🌳', desc: 'You and Earth grow together' }
+    ];
+
+    let stageIdx = 0;
+    if (total >= 200) stageIdx = 5;
+    else if (total >= 120) stageIdx = 4;
+    else if (total >= 70) stageIdx = 3;
+    else if (total >= 35) stageIdx = 2;
+    else if (total >= 12) stageIdx = 1;
+
+    const st = stages[stageIdx];
+    const el = document.getElementById('civ-tree');
+
+    let seeds = '';
+    Object.entries(EarthHQ.Data.crystals).forEach(([key, c]) => {
+      const n = s.crystals[key] || 0;
+      if (n > 0) seeds += `<div class="t-seed"><span>${c.icon}</span>${n}</div>`;
+    });
+
+    el.innerHTML = `
+      <div class="t-emoji">${st.emoji}</div>
+      <div class="t-name">${st.name}</div>
+      <div class="t-desc">${st.desc}</div>
+      <div class="t-seeds">${seeds || '<span style="color:var(--td);font-size:12px;">Collect crystals to grow</span>'}</div>
+    `;
   },
 
   renderHistory() {
@@ -833,15 +933,24 @@ EarthHQ.UI = {
       else if (st.done > 0) { statusClass = 'part'; statusText = `${st.done} contributed`; }
 
       let html = `<div class="hh"><div class="hd">${dayName}</div><div class="hs ${statusClass}">${statusText}</div></div>`;
+      if (st.done > 0) {
+        html += `<div style="font-size:11px;color:var(--td);margin-bottom:8px;">📅 ${d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>`;
+      }
+
+      const tasks = EarthHQ.State.s.tasks.length > 0 ? EarthHQ.State.s.tasks : EarthHQ.Data.defaultTasks;
+      html += '<div class="coll">';
+      tasks.forEach(t => {
+        const done = st.record[t.id];
+        const c = EarthHQ.Data.crystals[t.crystal];
+        if (done) {
+          html += `<div class="ci" style="border-color:${c.color}30;"><div class="cii">${t.icon}</div><div class="cin">${t.name}</div><div class="cic" style="color:${c.color}">✓</div></div>`;
+        } else {
+          html += `<div class="ci" style="opacity:0.35;"><div class="cii">${t.icon}</div><div class="cin">${t.name}</div></div>`;
+        }
+      });
+      html += '</div>';
 
       if (st.done > 0) {
-        html += '<div class="htl">';
-        const tasks = EarthHQ.State.s.tasks.length > 0 ? EarthHQ.State.s.tasks : EarthHQ.Data.defaultTasks;
-        tasks.forEach(t => {
-          if (st.record[t.id]) html += `<div class="ht done">${t.icon} ${t.name}</div>`;
-        });
-        html += '</div>';
-
         const dayCrystals = {};
         tasks.forEach(t => { if (st.record[t.id]) dayCrystals[t.crystal] = (dayCrystals[t.crystal] || 0) + 1; });
         html += '<div class="hcl">';
@@ -858,6 +967,38 @@ EarthHQ.UI = {
 
       div.innerHTML = html;
       list.appendChild(div);
+    }
+  },
+
+  renderReview() {
+    const s = EarthHQ.State.s;
+
+    document.getElementById('rv-date').textContent = '📅 ' + new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    const rvMission = document.getElementById('rv-mission-day');
+    if (rvMission) rvMission.textContent = '🌱 Mission Day ' + EarthHQ.State.missionDay();
+
+    const rc = document.getElementById('rv-crystals');
+    const hasAny = Object.keys(s.todayCrystals).some(k => s.todayCrystals[k] > 0);
+
+    if (hasAny) {
+      rc.innerHTML = '<div style="max-width:600px;margin:0 auto;">';
+      Object.entries(s.todayCrystals).forEach(([type, count]) => {
+        if (count > 0) {
+          const c = EarthHQ.Data.crystals[type];
+          rc.innerHTML += `
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);justify-content:center;">
+              <span style="font-size:28px;">${c.icon}</span>
+              <div style="display:flex;align-items:baseline;gap:12px;">
+                <span style="font-size:15px;font-weight:700;color:var(--tb);">${c.name} Crystal</span>
+                <span style="font-size:20px;font-weight:800;color:${c.color};">+${count}</span>
+              </div>
+            </div>
+          `;
+        }
+      });
+      rc.innerHTML += '</div>';
+    } else {
+      rc.innerHTML = '<p style="color:var(--td);font-size:13px;text-align:center;padding:16px 0;">No crystals earned today. Tomorrow is a new chance!</p>';
     }
   },
 
@@ -896,7 +1037,7 @@ EarthHQ.UI = {
     const meteor = () => { if (Math.random() < 0.003 && meteors.length < 2) meteors.push({ x: Math.random() * c.width * 0.5, y: Math.random() * c.height * 0.3, len: Math.random() * 60 + 30, sp: Math.random() * 6 + 3, ang: Math.PI / 4 }); };
     const draw = () => {
       x.fillStyle = '#070b14'; x.fillRect(0, 0, c.width, c.height);
-      stars.forEach(s => { s.y += s.s; if (s.y > c.height) { s.y = 0; s.x = Math.random() * c.width; } s.b += (Math.random() - 0.5) * s.ts; s.b = Math.max(0.2, Math.min(0.8, s.b)); x.beginPath(); x.arc(s.x, s.y, s.r, 0, Math.PI * 2); x.fillStyle = `rgba(180,200,230,${s.b})`; x.fill(); });
+      stars.forEach(s => { s.y += s.s; if (s.y > c.height) { s.y = 0; s.x = Math.random() * c.width; } s.b += (Math.random() - 0.5) * s.ts; s.b = Math.max(0.3, Math.min(1.0, s.b)); x.beginPath(); x.arc(s.x, s.y, s.r * 1.3, 0, Math.PI * 2); x.fillStyle = `rgba(240,230,255,${s.b})`; x.fill(); });
       meteors.forEach((m, i) => { m.x += Math.cos(m.ang) * m.sp; m.y += Math.sin(m.ang) * m.sp; const g = x.createLinearGradient(m.x, m.y, m.x - Math.cos(m.ang) * m.len, m.y - Math.sin(m.ang) * m.len); g.addColorStop(0, 'rgba(255,255,255,0.7)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.beginPath(); x.moveTo(m.x, m.y); x.lineTo(m.x - Math.cos(m.ang) * m.len, m.y - Math.sin(m.ang) * m.len); x.strokeStyle = g; x.lineWidth = 1.5; x.stroke(); if (m.x > c.width + 50 || m.y > c.height + 50) meteors.splice(i, 1); });
       meteor();
       requestAnimationFrame(draw);
@@ -908,21 +1049,26 @@ EarthHQ.UI = {
 
 // ===== TASK =====
 EarthHQ.Task = {
-  complete(id) {
+  toggle(id) {
     const s = EarthHQ.State.s;
-    if (s.todayDone[id]) return;
     const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
     const t = tasks.find(x => x.id === id);
     if (!t) return;
 
-    s.todayDone[id] = true;
-    EarthHQ.State.addCrystal(t.crystal, 1);
-    const msg = EarthHQ.Data.doneMsgs[id] || `${t.crystal} Crystal added.`;
-    EarthHQ.State.addLog('grow', msg);
-    EarthHQ.State.save();
-
-    EarthHQ.Sound.done();
-    EarthHQ.UI.showToast(msg);
+    if (s.todayDone[id]) {
+      s.todayDone[id] = false;
+      EarthHQ.State.removeCrystal(t.crystal, 1);
+      EarthHQ.State.save();
+      EarthHQ.Sound.click();
+      EarthHQ.UI.showToast(`${t.name} unchecked.`);
+    } else {
+      s.todayDone[id] = true;
+      EarthHQ.State.addCrystal(t.crystal, 1);
+      const msg = EarthHQ.Data.doneMsgs[id] || `${t.crystal} Crystal added.`;
+      EarthHQ.State.save();
+      EarthHQ.Sound.done();
+      EarthHQ.UI.showToast(msg);
+    }
     EarthHQ.UI.render();
   }
 };
@@ -941,9 +1087,9 @@ EarthHQ.CatchUp = {
     const preview = document.getElementById('cu-preview');
     preview.innerHTML = '<h4>Crystals you will add:</h4>';
     const tasks = EarthHQ.State.s.tasks.length > 0 ? EarthHQ.State.s.tasks : EarthHQ.Data.defaultTasks;
-    tasks.forEach(t => {
+    tasks.forEach((t, i) => {
       const c = EarthHQ.Data.crystals[t.crystal];
-      preview.innerHTML += `<div class="ci"><span class="cii">${c.icon}</span><span>${c.name} Crystal — ${t.name}</span></div>`;
+      preview.innerHTML += `<div class="ci" style="cursor:pointer;" onclick="document.getElementById('cu-check-${i}').click()"><input type="checkbox" id="cu-check-${i}" checked style="width:18px;height:18px;accent-color:var(--ck);cursor:pointer;" onclick="event.stopPropagation()"><span class="cii">${c.icon}</span><span>${c.name} Crystal — ${t.name}</span></div>`;
     });
 
     EarthHQ.UI.showToast('');
@@ -956,12 +1102,18 @@ EarthHQ.CatchUp = {
     const s = EarthHQ.State.s;
     const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
     const dayRecord = {};
-    tasks.forEach(t => {
-      dayRecord[t.id] = true;
-      EarthHQ.State.addCrystal(t.crystal, 1);
+    tasks.forEach((t, i) => {
+      const cb = document.getElementById(`cu-check-${i}`);
+      if (cb && cb.checked) {
+        dayRecord[t.id] = true;
+        EarthHQ.State.addCrystal(t.crystal, 1);
+      }
     });
+    if (Object.keys(dayRecord).length === 0) {
+      EarthHQ.UI.closeMod('cu-mod');
+      return;
+    }
     s.history[ds] = dayRecord;
-    EarthHQ.State.addLog('catch', `Caught up ${ds}. All ${tasks.length} contributions added.`);
     EarthHQ.State.save();
 
     EarthHQ.Sound.catchup();
@@ -977,10 +1129,6 @@ EarthHQ.App = {
 
   finishDay() {
     const s = EarthHQ.State.s;
-    const tasks = s.tasks.length > 0 ? s.tasks : EarthHQ.Data.defaultTasks;
-    const doneCount = Object.values(s.todayDone).filter(Boolean).length;
-    const total = tasks.length;
-    const allDone = doneCount === total;
 
     if (Object.keys(s.todayDone).length > 0) {
       s.history[EarthHQ.State.today()] = { ...s.todayDone };
@@ -993,47 +1141,19 @@ EarthHQ.App = {
     EarthHQ.State.save();
     EarthHQ.Sound.allDone();
 
-    const icon = document.getElementById('exit-icon');
-    const title = document.getElementById('exit-title');
-    const sub = document.getElementById('exit-sub');
-    const msg = document.getElementById('exit-msg');
-    const list = document.getElementById('exit-list');
-
-    if (allDone) {
-      icon.textContent = '🌍';
-      title.textContent = 'Earth Civilization Protected Today';
-      sub.innerHTML = 'All systems are online.<br>Thank you, Commander.';
-      msg.innerHTML = 'Go enjoy your real-world adventure.';
-    } else if (doneCount > 0) {
-      icon.textContent = '🌍';
-      title.textContent = 'Earth Is Safer Today';
-      sub.innerHTML = 'Thank you for your contribution.<br>Every mission matters.<br>We will continue tomorrow.';
-      msg.innerHTML = 'Go play, read, draw, or rest.<br>See you tomorrow.';
-    } else {
-      icon.textContent = '🌍';
-      title.textContent = 'See You Tomorrow';
-      sub.innerHTML = 'Rest well, Guardian.<br>Tomorrow is a new day.';
-      msg.innerHTML = 'Go rest and recharge.<br>We will protect Earth again tomorrow.';
-    }
-
-    list.innerHTML = '';
-    tasks.forEach(t => {
-      if (s.todayDone[t.id]) {
-        const c = EarthHQ.Data.crystals[t.crystal];
-        const li = document.createElement('li');
-        li.innerHTML = `${t.name} <span style="color:${c.color}">${c.icon} ${c.name}</span>`;
-        list.appendChild(li);
-      }
-    });
-
-    document.getElementById('exit').classList.add('on');
+    EarthHQ.UI.renderReview();
+    EarthHQ.UI.go('review');
   },
 
-  sayGoodbye() {
+  goReview() {
+    EarthHQ.UI.renderReview();
+    EarthHQ.UI.go('review');
+  },
+
+  goRest() {
     EarthHQ.State.s.goodbye = true;
     EarthHQ.State.save();
-    document.getElementById('exit').classList.remove('on');
-    setTimeout(() => EarthHQ.UI.go('rest'), 300);
+    EarthHQ.UI.go('rest');
   },
 
   addTask() {
@@ -1097,6 +1217,90 @@ EarthHQ.App = {
     };
     reader.readAsText(file);
     input.value = '';
+  },
+
+  showRestReport() {
+    const s = EarthHQ.State.s;
+    const rv = document.getElementById('rest-view');
+    rv.style.display = 'block';
+
+    let html = '<div class="panel"><div class="pt" style="color:var(--cd);">✨ Crystals Earned Today</div><div style="margin-top:14px;max-width:600px;margin-left:auto;margin-right:auto;">';
+
+    const hasAny = Object.keys(s.todayCrystals).some(k => s.todayCrystals[k] > 0);
+    if (hasAny) {
+      Object.entries(s.todayCrystals).forEach(([type, count]) => {
+        if (count > 0) {
+          const c = EarthHQ.Data.crystals[type];
+          html += `
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);justify-content:center;">
+              <span style="font-size:28px;">${c.icon}</span>
+              <div style="display:flex;align-items:baseline;gap:12px;">
+                <span style="font-size:15px;font-weight:700;color:var(--tb);">${c.name} Crystal</span>
+                <span style="font-size:20px;font-weight:800;color:${c.color};">+${count}</span>
+              </div>
+            </div>
+          `;
+        }
+      });
+    } else {
+      html += '<p style="color:var(--td);font-size:13px;text-align:center;padding:16px 0;">No crystals earned today.</p>';
+    }
+    html += '</div></div>';
+
+    html += `
+      <div style="text-align:center;padding:20px 12px 12px;">
+        <p style="color:var(--tn);font-size:15px;line-height:1.7;margin-bottom:8px;">🌍 Earth became safer today.</p>
+        <p style="color:var(--tn);font-size:15px;line-height:1.7;margin-bottom:8px;">🏠 The people who love you are proud of your effort.</p>
+        <p style="color:var(--ck);font-size:15px;font-weight:700;">Thank you, Commander.</p>
+      </div>
+    `;
+
+    rv.innerHTML = html;
+    rv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  showRestTree() {
+    const s = EarthHQ.State.s;
+    const total = Object.values(s.crystals).reduce((a, b) => a + b, 0);
+    const rv = document.getElementById('rest-view');
+    rv.style.display = 'block';
+
+    const stages = [
+      { name: 'Seed', emoji: '🌱', desc: 'A tiny seed of hope' },
+      { name: 'Sprout', emoji: '🌿', desc: 'First leaves reach for light' },
+      { name: 'Young Tree', emoji: '🌲', desc: 'Growing stronger each day' },
+      { name: 'Strong Tree', emoji: '🌳', desc: 'Deep roots, steady growth' },
+      { name: 'Wisdom Tree', emoji: '🍃', desc: 'Wisdom flows through every branch' },
+      { name: 'Earth Guardian Tree', emoji: '🌎🌳', desc: 'You and Earth grow together' }
+    ];
+
+    let stageIdx = 0;
+    if (total >= 200) stageIdx = 5;
+    else if (total >= 120) stageIdx = 4;
+    else if (total >= 70) stageIdx = 3;
+    else if (total >= 35) stageIdx = 2;
+    else if (total >= 12) stageIdx = 1;
+
+    const st = stages[stageIdx];
+
+    let seeds = '';
+    Object.entries(EarthHQ.Data.crystals).forEach(([key, c]) => {
+      const n = s.crystals[key] || 0;
+      if (n > 0) seeds += `<div class="t-seed"><span>${c.icon}</span>${n}</div>`;
+    });
+
+    rv.innerHTML = `
+      <div class="panel">
+        <div class="pt" style="color:var(--cd);">🌳 Civilization Tree</div>
+        <div class="tree" style="padding:16px 8px;">
+          <div class="t-emoji" style="font-size:80px;line-height:1;animation:treeBreath 5s ease-in-out infinite;">${st.emoji}</div>
+          <div class="t-name" style="font-size:18px;font-weight:800;color:var(--cd);margin-top:10px;">${st.name}</div>
+          <div class="t-desc" style="font-size:13px;color:var(--tn);margin-top:4px;">${st.desc}</div>
+          <div class="t-seeds" style="display:flex;justify-content:center;gap:14px;margin-top:16px;flex-wrap:wrap;">${seeds || '<span style="color:var(--td);font-size:12px;">Collect crystals to grow</span>'}</div>
+        </div>
+      </div>
+    `;
+    rv.scrollIntoView({ behavior: 'smooth', block: 'start' });
   },
 
   reset() { if (confirm('Reset all data? This cannot be undone.')) EarthHQ.State.reset(); }
