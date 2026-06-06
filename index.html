@@ -626,7 +626,12 @@ EarthHQ.State = {
     this.save();
   },
 
-  _ds(d) { return d.toISOString().split('T')[0]; },
+  _ds(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  },
   today() { return this._ds(new Date()); },
   missionDay() {
     const first = this.s.firstMissionDate;
@@ -748,6 +753,8 @@ EarthHQ.UI = {
     // Route
     setTimeout(() => {
       const s = EarthHQ.State.s;
+      // Re-check day right before routing in case midnight passed while app was closed
+      EarthHQ.State.checkDay();
       if (location.search.includes('newday=1')) {
         s.goodbye = false;
         s.finishedToday = false;

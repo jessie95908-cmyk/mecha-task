@@ -1,3 +1,4 @@
 # 本地辅助脚本，不需要部署到云端
 *.command
 *.txt
+node_modules/
